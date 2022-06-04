@@ -112,14 +112,20 @@ class Leads extends Security_Controller {
     /* insert or update a lead */
 
     function save() {
-        // $avatar = $this->request->getFile('cds_upload');
-        // $avatar1 = $avatar->move(WRITEPATH . 'uploads');
-        // $cds_files_name = "";
-        // $cds_files_temp = "";
-        if(isset($_FILES))
-        {
-            $cds_file_name = "/files"."/cds_files"."/".$_FILES['cds_upload']['name'];
-            $cds_file_path = base_url().$cds_files_name;
+
+        $old_file = $this->request->getPost('old_cds_file');
+
+        if(isset($_FILES['cds_upload']))
+        {        
+            if($old_file!=''){
+                unlink('files/cds_files/' . basename($old_file));
+            }
+
+            $file_name = rand() . $_FILES['cds_upload']['name'];
+            $cds_file_name ="/files/cds_files/" . $file_name;
+            $file = $this->request->getFile('cds_upload');
+            $file->move('./files/cds_files', $file_name);
+            
             // $google = new Google();
             // $google->upload_file($_FILES['cds_upload']['temp'], $_FILES['cds_upload']['name'], "cds_files");exit;
             //move_uploaded_file($_FILES['cds_upload']['tmp_name'],$cds_file_path);   
@@ -132,8 +138,10 @@ class Leads extends Security_Controller {
             //   catch(Exception $e) {
             //     echo 'Message: ' .$e->getMessage();
             //   }
+        }else{
+            $cds_file_name = $old_file;
         }
-        // exit;
+       
         
         $client_id = $this->request->getPost('id');
         $this->can_access_this_lead($client_id);
@@ -144,23 +152,7 @@ class Leads extends Security_Controller {
             "id" => "numeric",
             "company_name" => "required"
         ));
-        // Array ( [id] => [view] => [company_name] => abcdemo
-
-        // [lead_source_id] => 1 
-        // [industry] => dsd 
-        // [contact_name] => sdsd 
-        // [designation] => dddd 
-        // [phone] => 9315549908 
-        // [telephone] => 564545 
-        // [email] => demo@gmail.com 
-        // [website] => dsdfdf 
-        // [agent_id] => 2 
-        // [product] => dfdf 
-        // [affected_area] => dfdf 
-        // [cds_file] => 
-        // [enquiry_date] => 2022-05-04 
-        // [address] => frd 
-        // [remark] => fddfdfdf )
+       
         $data = array(
             "company_name" => $this->request->getPost('company_name'),
             "nature_of_industry" => $this->request->getPost('nature_of_industry'),
@@ -184,13 +176,9 @@ class Leads extends Security_Controller {
             //"owner_id" => $this->request->getPost('owner_id') ? $this->request->getPost('owner_id') : $this->login_user->id
         );
 
-        //print_r($data);exit;
-
         if (!$client_id) {
             $data["created_date"] = get_current_utc_time();
         }
-
-
         $data = clean_data($data);
         $save_id = $this->Clients_model->ci_save($data, $client_id);
         if ($save_id) {

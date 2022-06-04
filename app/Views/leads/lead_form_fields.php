@@ -9,17 +9,17 @@
                         <?php echo app_lang('company_name')."<span style='color:red!important;'>*</span>"; ?>
                     </label>
                     <?php
-            echo form_input(array(
-                "id" => "company_name",
-                "name" => "company_name",
-                "value" => $model_info->company_name,
-                "class" => "form-control",
-                "placeholder" => app_lang('company_name'),
-                "autofocus" => true,
-                "data-rule-required" => true,
-                "data-msg-required" => app_lang("field_required"),
-            ));
-            ?>
+                        echo form_input(array(
+                            "id" => "company_name",
+                            "name" => "company_name",
+                            "value" => $model_info->company_name,
+                            "class" => "form-control",
+                            "placeholder" => app_lang('company_name'),
+                            "autofocus" => true,
+                            "data-rule-required" => true,
+                            "data-msg-required" => app_lang("field_required"),
+                        ));
+                        ?>
                 </div>
             </div>  
         </div>
@@ -232,16 +232,16 @@
                 <div class="col-md-12">
                     <label for="cds_file"><?php echo app_lang('cds_file'); ?> </label>
                     <?php
-            echo form_upload(array(
-                "id" => "cds_upload",
-                "name" => "cds_upload",
-                "class" => "form-control",
-                "type" => "file",
-                "value" => $model_info->cds_upload,
-                "accept" => "application/pdf",
-                "placeholder" => app_lang('cds_file')
-            ));
-            ?>
+                        echo form_upload(array(
+                            "id" => "cds_upload",
+                            "name" => "cds_upload",
+                            "class" => "form-control",
+                            "type" => "file",                           
+                            "accept" => "application/pdf",
+                            "placeholder" => app_lang('cds_file')
+                        ));
+                        ?>
+                        <input type="hidden" name="old_cds_file" value="<?= $model_info->cds_upload; ?>">
                 </div>
             </div>
         </div>
