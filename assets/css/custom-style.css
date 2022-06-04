@@ -1,0 +1,35 @@
+/*Write your custom css in this file.*/
+.custom-login-card {
+	background: transparent !important;
+	color: white !important;
+}
+.custom-login-card .card-header {
+	background: transparent !important;
+	border: 0;
+}
+.custom-login-card .general-form .form-control {
+	background: transparent !important;
+	border: 3px ​solid white !important;
+	color: white !important;
+}
+.custom-login-card .general-form .form-control::placeholder {
+	color: white !important;
+}
+.custom-login-card a {
+	color: white !important;
+}
+.bg-green {
+	background-color: var(--bs-green) !important;
+}
+.badge-warning {
+	background-color: var(--bs-yellow) !important;
+}
+.badge-danger {
+	background-color: var(--bs-red) !important;
+}
+.badge-success {
+	background-color: var(--bs-green) !important;
+}
+.badge-info {
+	background-color: var(--bs-info) !important;
+}
