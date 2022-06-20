@@ -3,9 +3,9 @@
         <div class="col-md-3">
             <?php echo total_clients_widget($show_own_clients_only_user_id); ?>
         </div>
-        <div class="col-md-3">
+        <!-- <div class="col-md-3">
             <?php echo total_contacts_widget($show_own_clients_only_user_id); ?>
-        </div>
+        </div> -->
         <!-- <div class="col-md-3">
             <?php 
             // echo client_contacts_logged_in_widget("logged_in_today", $show_own_clients_only_user_id); 

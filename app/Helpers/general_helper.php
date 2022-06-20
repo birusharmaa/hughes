@@ -225,7 +225,6 @@ if (!function_exists('active_menu')) {
         $found_url_active_key = null;
         $found_controller_active_key = null;
         $found_special_active_key = null;
-
         foreach ($sidebar_menu as $key => $menu) {
             if (isset($menu["name"])) {
                 $menu_name = $menu["name"];
@@ -279,6 +278,7 @@ if (!function_exists('active_menu')) {
             }
         }
 
+       
         if (!is_null($found_url_active_key)) {
             $sidebar_menu[$found_url_active_key]["is_active_menu"] = 1;
         } else if (!is_null($found_special_active_key)) {
@@ -286,6 +286,7 @@ if (!function_exists('active_menu')) {
         } else if (!is_null($found_controller_active_key)) {
             $sidebar_menu[$found_controller_active_key]["is_active_menu"] = 1;
         }
+       
 
         return $sidebar_menu;
     }

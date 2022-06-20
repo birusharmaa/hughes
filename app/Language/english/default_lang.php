@@ -61,6 +61,7 @@ $lang["state"] = "State";
 $lang["zip"] = "Zip";
 $lang["country"] = "Country";
 $lang["phone"] = "Phone";
+$lang["gst_number"] = "GST No.";
 $lang["telephone"] = "Telephone";
 $lang["private"] = "Private";
 $lang["website"] = "Website";
@@ -92,7 +93,8 @@ $lang["monthly"] = "Monthly";
 $lang["weekly"] = "Weekly";
 $lang["yearly"] = "Yearly";
 
-$lang["see_all"] = "See All";
+$lang["see_all"] = "See All"; 
+$lang["transaction_id"] = "Transaction Id"; 
 
 /* messages */
 $lang["error_occurred"] = "Sorry, an error occurred during processing the action! <br /> Please try again later.";
@@ -169,8 +171,11 @@ $lang["select_a_team"] = "Select a team";
 $lang["dashboard"] = "Dashboard";
 $lang["product_literature"] = "Product Literature";
 $lang["add_literature"] = "Add Literature";
+$lang["add_literature_file"] = "Add Literature File";
+$lang["edit_literature"] = "Edit Literature ";
 $lang["assessment"] = "Assessment";
 $lang["add_assessment"] = "Add Assessment";
+$lang["edit_assesment"] = "Edit Assessment";
 $lang["tp_name"] = "Technical Person Name";
 $lang["ccp_name"] = "Customer's Concern Person";
 $lang["area_assessment"] = "Area of Assessment";
@@ -192,6 +197,7 @@ $lang["pending_application_report"] = "Pending Application Report";
 $lang["mis_payment"] = "MIS of Payments";
 $lang["lead_status_report"] = "Lead Status Report";
 $lang["client_status_report"] = "Client Status Report";
+$lang["transport"] = "Transport";
 $lang["total_leads"] = "Total Leads";
 $lang["total_leads_converted"] = "Total Leads Converted";
 $lang["total_leads_lost"] = "Total Leads Lost";
@@ -967,6 +973,7 @@ $lang["empty_starred_clients"] = "To access your favorite clients quickly, pleas
 $lang["download_zip_name"] = "documents";
 $lang["invoice_prefix"] = "Invoice prefix";
 $lang["invoice_style"] = "Invoice style";
+$lang["file_upload"] = "File upload";
 $lang["delete_confirmation_message"] = " Are you sure? You won't be able to undo this action!";
 $lang["left"] = "Left";
 $lang["right"] = "Right";
@@ -2083,5 +2090,9 @@ $lang["logged_in_today"] = "Logged in today";
 $lang["logged_in_last_seven_days"] = "Logged in last 7 days";
 
 $lang["hide_from_kanban_view"] = "Hide from kanban view";
+$lang["customer_name"] = "Customer Name";
+$lang["download_order"] = "Download Order";
+$lang["dispatch_advice"] = "Dispatch Advice";
+
 
 return $lang;

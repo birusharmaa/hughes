@@ -2,23 +2,27 @@
 
 namespace App\Models;
 
-class Clients_model extends Crud_model {
+class Clients_model extends Crud_model
+{
 
     protected $table = null;
 
-    function __construct() {
+    function __construct()
+    {
         $this->table = 'clients';
         parent::__construct($this->table);
     }
 
-    function get_details($options = array()) {
+    function get_details($options = array())
+    {
+        $session_id = $_SESSION['user_id'];
         $clients_table = $this->db->prefixTable('clients');
         $projects_table = $this->db->prefixTable('projects');
         $users_table = $this->db->prefixTable('users');
         $invoices_table = $this->db->prefixTable('invoices');
         $invoice_payments_table = $this->db->prefixTable('invoice_payments');
         $invoice_items_table = $this->db->prefixTable('invoice_items');
-        $taxes_table = $this->db->prefixTable('taxes');    
+        $taxes_table = $this->db->prefixTable('taxes');
         $client_groups_table = $this->db->prefixTable('client_groups');
         $lead_status_table = $this->db->prefixTable('lead_status');
         $estimates_table = $this->db->prefixTable('estimates');
@@ -27,12 +31,13 @@ class Clients_model extends Crud_model {
         $orders_table = $this->db->prefixTable('orders');
         $proposals_table = $this->db->prefixTable('proposals');
 
-        $where = "";
+        $where = " AND $clients_table.owner_id=$session_id";
         $id = get_array_value($options, "id");
         if ($id) {
             $id = $this->db->escapeString($id);
             $where .= " AND $clients_table.id=$id";
         }
+
 
         $custom_field_type = "clients";
 
@@ -49,7 +54,7 @@ class Clients_model extends Crud_model {
 
         $source = get_array_value($options, "source");
         if ($source) {
-            $where .= " AND $clients_table.lead_source_id='$source'";  
+            $where .= " AND $clients_table.lead_source_id='$source'";
         }
 
         $owner_id = get_array_value($options, "owner_id");
@@ -129,7 +134,8 @@ class Clients_model extends Crud_model {
         return $this->db->query($sql);
     }
 
-    private function make_quick_filter_query($filter, $clients_table, $projects_table, $invoices_table, $taxes_table, $invoice_payments_table, $invoice_items_table, $estimates_table, $estimate_requests_table, $tickets_table, $orders_table, $proposals_table) {
+    private function make_quick_filter_query($filter, $clients_table, $projects_table, $invoices_table, $taxes_table, $invoice_payments_table, $invoice_items_table, $estimates_table, $estimate_requests_table, $tickets_table, $orders_table, $proposals_table)
+    {
         $query = "";
 
         if ($filter == "has_open_projects" || $filter == "has_completed_projects" || $filter == "has_any_hold_projects" || $filter == "has_canceled_projects") {
@@ -196,7 +202,8 @@ class Clients_model extends Crud_model {
         return $query;
     }
 
-    function get_primary_contact($client_id = 0, $info = false) {
+    function get_primary_contact($client_id = 0, $info = false)
+    {
         $users_table = $this->db->prefixTable('users');
 
         $sql = "SELECT $users_table.id, $users_table.first_name, $users_table.last_name
@@ -212,7 +219,8 @@ class Clients_model extends Crud_model {
         }
     }
 
-    function add_remove_star($client_id, $user_id, $type = "add") {
+    function add_remove_star($client_id, $user_id, $type = "add")
+    {
         $clients_table = $this->db->prefixTable('clients');
         $client_id = $client_id ? $this->db->escapeString($client_id) : $client_id;
 
@@ -229,7 +237,8 @@ class Clients_model extends Crud_model {
         return $this->db->query($sql);
     }
 
-    function get_starred_clients($user_id) {
+    function get_starred_clients($user_id)
+    {
         $clients_table = $this->db->prefixTable('clients');
 
         $sql = "SELECT $clients_table.id,  $clients_table.company_name
@@ -239,7 +248,8 @@ class Clients_model extends Crud_model {
         return $this->db->query($sql);
     }
 
-    function delete_client_and_sub_items($client_id) {
+    function delete_client_and_sub_items($client_id)
+    {
         $clients_table = $this->db->prefixTable('clients');
         $general_files_table = $this->db->prefixTable('general_files');
         $users_table = $this->db->prefixTable('users');
@@ -266,7 +276,8 @@ class Clients_model extends Crud_model {
         return true;
     }
 
-    function is_duplicate_company_name($company_name, $id = 0) {
+    function is_duplicate_company_name($company_name, $id = 0)
+    {
 
         $result = $this->get_all_where(array("company_name" => $company_name, "is_lead" => 0, "deleted" => 0));
         if (count($result->getResult()) && $result->getRow()->id != $id) {
@@ -276,7 +287,8 @@ class Clients_model extends Crud_model {
         }
     }
 
-    function get_leads_kanban_details($options = array()) {
+    function get_leads_kanban_details($options = array())
+    {
         $clients_table = $this->db->prefixTable('clients');
         $lead_source_table = $this->db->prefixTable('lead_source');
         $users_table = $this->db->prefixTable('users');
@@ -332,7 +344,8 @@ class Clients_model extends Crud_model {
         return $this->db->query($sql);
     }
 
-    function get_search_suggestion($search = "", $options = array()) {
+    function get_search_suggestion($search = "", $options = array())
+    {
         $clients_table = $this->db->prefixTable('clients');
 
         $where = "";
@@ -354,7 +367,9 @@ class Clients_model extends Crud_model {
         return $this->db->query($sql);
     }
 
-    function count_total_clients($options = array()) {
+    function count_total_clients($options = array())
+    {
+        $session_id = $_SESSION['user_id'];
         $clients_table = $this->db->prefixTable('clients');
         $tickets_table = $this->db->prefixTable('tickets');
         $invoices_table = $this->db->prefixTable('invoices');
@@ -381,11 +396,12 @@ class Clients_model extends Crud_model {
 
         $sql = "SELECT COUNT($clients_table.id) AS total
         FROM $clients_table 
-        WHERE $clients_table.deleted=0 AND $clients_table.is_lead=0 $where";
+        WHERE $clients_table.deleted=0 AND $clients_table.is_lead=0 AND $clients_table.owner_id= $session_id $where";
         return $this->db->query($sql)->getRow()->total;
     }
 
-    function get_conversion_rate_with_currency_symbol() {
+    function get_conversion_rate_with_currency_symbol()
+    {
         $clients_table = $this->db->prefixTable('clients');
 
         $sql = "SELECT $clients_table.currency_symbol, $clients_table.currency
@@ -395,7 +411,8 @@ class Clients_model extends Crud_model {
         return $this->db->query($sql);
     }
 
-    function count_total_leads($show_own_leads_only_user_id = "") {
+    function count_total_leads($show_own_leads_only_user_id = "")
+    {
         $clients_table = $this->db->prefixTable('clients');
 
         $where = "";
@@ -410,32 +427,42 @@ class Clients_model extends Crud_model {
     }
 
     function insertDatas($data)
-    { 
+    {
         return $this->db->query($data);
     }
 
     function get_total_leads_count()
-    { 
-        $data = "SELECT count(id) as total_lead FROM `thewings_clients` WHERE deleted = 0";
+    {
+        $session_id = $_SESSION['user_id'];
+        $data = "SELECT count(id) as total_lead FROM `thewings_clients` WHERE deleted = 0 AND is_lead =1 AND owner_id= $session_id";
         return $this->db->query($data);
     }
 
     function get_lost_leads_count()
-    { 
+    {
         $data = "SELECT count(id) as lost_lead FROM `thewings_clients` WHERE lead_status_id = 6 AND deleted = 0";
         return $this->db->query($data);
     }
 
     function get_progress_leads_count()
-    { 
+    {
         $data = "SELECT count(id) as progress_lead FROM `thewings_clients` WHERE deleted = 0 AND lead_status_id in (2,3,4)";
         return $this->db->query($data);
     }
 
     function get_convert_leads_count()
-    { 
+    {
         $data = "SELECT count(id) as convert_lead FROM `thewings_clients` WHERE deleted = 0 AND lead_status_id = 5";
         return $this->db->query($data);
     }
 
+    function all_lead_dropdown()
+    {
+        $clients_table = $this->db->prefixTable('clients');
+
+        $sql = "SELECT $clients_table.id , $clients_table.company_name
+        FROM $clients_table 
+        WHERE $clients_table.deleted=0 AND $clients_table.is_lead=1";
+        return $this->db->query($sql);
+    }
 }

@@ -1,0 +1,6 @@
+company_name,address,city,state,zip,gst_number,currency_symbol,currency,disable_online_payment,designation,mobile,phone,email,affected_area,created_date,is_lead,group_ids
+demo1,demo1,asd1,demo1,11111,1234567890,INR,INR,1,demo1,9876543210,9876543210,demo1@gmail.com,demo1,22-05-2022,0,3
+demo2,demo2,asd2,demo2,22222,1234567890,EUR,EUR,1,demo2,9876543210,9876543210,demo2@gmail.com,demo2,22-05-2022,0,3
+demo3,demo3,asd3,demo3,33333,1111111110,RUB,RUB,1,demo3,9876543210,9876543210,demo3@gmail.com,demo3,22-05-2022,0,3
+demo4,demo4,asd4,demo4,44444,2222222220,USD,USD,1,demo4,9876543210,9876543210,demo4@gmail.com,demo4,22-05-2022,0,3
+demo5,demo5,asd5,demo5,55555,3333333330,INR,INR,1,demo5,9876543210,9876543210,demo5@gmail.com,demo5,22-05-2022,0,3

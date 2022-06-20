@@ -38,21 +38,21 @@
                     </div>
                 </div>
             </div>
-            <div class="form-group">
+            <!-- <div class="form-group">
                 <div class="col-md-12">
                     <div class="notepad">
                         <?php
-                        echo form_input(array(
-                            "id" => "note_labels",
+                        /* echo form_input(array(
+                           "id" => "note_labels",
                             "name" => "labels",
                             "value" => $model_info->labels,
                             "class" => "form-control",
                             "placeholder" => app_lang('labels')
-                        ));
+                        )); */
                         ?>
                     </div>
                 </div>
-            </div>
+            </div> -->
 
             <?php if ($project_id) { ?>
                 <?php if ($model_info->is_public) { ?>

@@ -1,5 +1,6 @@
-<?php echo form_open(get_uri("literature/save"), array("id" => "literature-form", "class" => "general-form", "role" => "form")); ?>
+<?php echo form_open(get_uri("Literature/save"), array("id" => "literature-form", "class" => "general-form", "role" => "form")); ?>
 <div class="modal-body clearfix">
+    
     <div class="container-fluid">
         <?php echo view("leads/literature/literature_form_fields"); ?>
     </div>
@@ -13,23 +14,24 @@
 </div>
 <?php echo form_close(); ?>
 
-<!-- <script type="text/javascript">
-    $(document).ready(function () {
-        $("#lead-form").appForm({
-            onSuccess: function (result) {
-                if (result.view === "details") {
-                    appAlert.success(result.message, {duration: 10000});
-                    setTimeout(function () {
+<script type="text/javascript">
+    $(document).ready(function() {
+        $("#literature-form").appForm({
+            onSuccess: function(result) {
+                if (result.data) {
+                    appAlert.success(result.message, {
+                        duration: 10000
+                    });
+                    setTimeout(function() {
                         location.reload();
-                    }, 500);
+                    }, 1000);
                 } else {
-                    $("#lead-table").appTable({newData: result.data, dataId: result.id});
-                    $("#reload-kanban-button:visible").trigger("click");
+                    $("#literature-table").appTable({
+                        newData: result.data,
+                        dataId: result.id
+                    });
                 }
             }
         });
-        setTimeout(function () {
-            $("#company_name").focus();
-        }, 200);
     });
-</script>     -->
+</script>

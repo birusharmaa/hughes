@@ -496,6 +496,7 @@ class App extends BaseConfig {
     public $temp_file_path = 'files/temp/';
     public $profile_image_path = 'files/profile_images/';
     public $timeline_file_path = 'files/timeline_files/';
+    public $literature_file_path = 'files/literature_images/';
     public $project_file_path = 'files/project_files/';
     public $system_file_path = 'files/system/';
     public $check_notification_after_every = "60"; //Check notification after every 60 seconds. Recommanded: don't set this value less than 20.

@@ -1,4 +1,4 @@
-<?php echo form_open(get_uri("assessment/save"), array("id" => "assessment-form", "class" => "general-form", "role" => "form")); ?>
+<?php echo form_open(get_uri("Assesment/save"), array("id" => "assessment-form", "class" => "general-form", "role" => "form")); ?>
 <div class="modal-body clearfix">
     <div class="container-fluid">
         <?php echo view("leads/assessment/assessment_form_fields"); ?>
@@ -13,23 +13,24 @@
 </div>
 <?php echo form_close(); ?>
 
-<!-- <script type="text/javascript">
-    $(document).ready(function () {
-        $("#lead-form").appForm({
-            onSuccess: function (result) {
-                if (result.view === "details") {
-                    appAlert.success(result.message, {duration: 10000});
-                    setTimeout(function () {
+<script type="text/javascript">
+    $(document).ready(function() {
+        $("#assessment-form").appForm({
+            onSuccess: function(result) {
+                if (result.data) {
+                    appAlert.success(result.message, {
+                        duration: 10000
+                    });
+                    setTimeout(function() {
                         location.reload();
-                    }, 500);
+                    }, 1000);
                 } else {
-                    $("#lead-table").appTable({newData: result.data, dataId: result.id});
-                    $("#reload-kanban-button:visible").trigger("click");
+                    $("#assessment-table").appTable({
+                        newData: result.data,
+                        dataId: result.id
+                    });
                 }
             }
         });
-        setTimeout(function () {
-            $("#company_name").focus();
-        }, 200);
     });
-</script>     -->
+</script>

@@ -6,7 +6,7 @@
     if ($user_dashboard) {
         $dashboard_link = get_uri("dashboard/view/" . $user_dashboard);
     }
-    ?>
+    ?>  
     <a class="sidebar-toggle-btn hide" href="#">
         <i data-feather="menu" class="icon mt-1 text-off"></i>
     </a>
@@ -18,14 +18,12 @@
 
     <div class="sidebar-scroll">
         <ul id="sidebar-menu" class="sidebar-menu">
-            <?php
-            // echo '<pre>';
-            // print_r($sidebar_menu); die;
-
+               
+            <?php           
             if (!$is_preview) {
                 $sidebar_menu = get_active_menu($sidebar_menu);
             }
-
+       
             foreach ($sidebar_menu as $main_menu) {
                 if (isset($main_menu["name"])) {
                     $submenu = get_array_value($main_menu, "submenu");

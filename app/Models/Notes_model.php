@@ -12,6 +12,7 @@ class Notes_model extends Crud_model {
     }
 
     function get_details($options = array()) {
+       
         $notes_table = $this->db->prefixTable('notes');
         $users_table = $this->db->prefixTable('users');
 
@@ -56,7 +57,6 @@ class Notes_model extends Crud_model {
         }
         
         $select_labels_data_query = $this->get_labels_data_query();
-        
         $sql = "SELECT $notes_table.*, CONCAT($users_table.first_name, ' ', $users_table.last_name) AS created_by_user_name, $select_labels_data_query
         FROM $notes_table
         LEFT JOIN $users_table ON $users_table.id=$notes_table.created_by

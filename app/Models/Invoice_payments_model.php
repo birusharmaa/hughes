@@ -21,7 +21,7 @@ class Invoice_payments_model extends Crud_model {
 
         $id = get_array_value($options, "id");
         if ($id) {
-            $where .= " AND $invoice_payments_table.id=$id";
+            $where .= " AND $invoice_payments_table.clientId=$id";
         }
 
         $invoice_id = get_array_value($options, "invoice_id");

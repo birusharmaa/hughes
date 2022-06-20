@@ -17,10 +17,12 @@ class App_Controller extends Controller {
     public $session;
     public $form_validation;
     public $parser;
+    public $request;
 
     public function __construct() {
         //main template to make frame of this app
         $this->template = new Template();
+        $this->request = \Config\Services::request();
 
         //load helpers
         helper(array('url', 'file', 'form', 'language', 'general', 'date_time', 'app_files', 'widget', 'activity_logs', 'currency'));
@@ -114,6 +116,14 @@ class App_Controller extends Controller {
             'Proposals_model',
             'Proposal_items_model',
             'Checklist_template_model',
+            'Literature_model',
+            'ActivityModel',
+            'AssesmentModel',
+            'QuotationModel',
+            'LeadActivityModel',
+            'TransporterModel',
+            'OrderProductModel',
+            'Dispatch_model',
         );
     }
 

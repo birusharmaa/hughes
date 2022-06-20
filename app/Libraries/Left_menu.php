@@ -38,8 +38,11 @@ class Left_menu {
     private function _prepare_sidebar_menu_items($type = "", $return_sub_menu_data = false) {
         $final_items_array = array();
         $items_array = $this->_get_sidebar_menu_items($type);
+       
 
         foreach ($items_array as $item) {
+           
+           
             $main_menu_name = get_array_value($item, "name");
 
             if (isset($item["submenu"])) {
@@ -50,6 +53,7 @@ class Left_menu {
 
                 $submenu = get_array_value($item, "submenu");
                 foreach ($submenu as $key => $s_menu) {
+                    
                     //prepare help items differently
                     if ($main_menu_name == "help_and_support") {
                         $s_menu = $this->_make_customized_sub_menu_for_help_and_support($key, $s_menu);
@@ -67,10 +71,13 @@ class Left_menu {
                 $final_items_array[$main_menu_name] = $item;
             }
         }
+        
 
         //add todo
         $final_items_array["todo"] = array("name" => "todo", "url" => "todo", "class" => "check-square");
-
+        // echo "<pre>";
+        // print_r($final_items_array);
+        // exit;
         return $final_items_array;
     }
 
@@ -91,7 +98,7 @@ class Left_menu {
     private function _get_left_menu_from_setting_for_rander($is_preview = false, $type = "default") {
         $user_left_menu = get_setting("user_" . $this->ci->login_user->id . "_left_menu");
         $default_left_menu = ($type == "client_default" || $this->ci->login_user->user_type == "client") ? get_setting("default_client_left_menu") : get_setting("default_left_menu");
-        $custom_left_menu = "";
+            $custom_left_menu = "";
 
         //for preview, show the edit type preview
         if ($is_preview) {
@@ -102,6 +109,10 @@ class Left_menu {
         } else {
             $custom_left_menu = $user_left_menu ? $user_left_menu : $default_left_menu; //page rander
         }
+        // echo "<pre>";
+        // echo json_decode(json_encode($custom_left_menu),true);
+        // // print_r($custom_left_menu);
+        // exit;
 
         return $custom_left_menu ? json_decode(json_encode(@unserialize($custom_left_menu)), true) : array();
     }
@@ -181,12 +192,14 @@ class Left_menu {
 
     function rander_left_menu($is_preview = false, $type = "default") {
         $final_left_menu_items = array();
+        
         $custom_left_menu_items = $this->_get_left_menu_from_setting_for_rander($is_preview, $type);
-
+        
+        
         if ($custom_left_menu_items) {
             $left_menu_items = $this->_prepare_sidebar_menu_items($type);
             $last_final_menu_item = ""; //store the last menu item of final left menu to add submenu to this item
-
+           
             foreach ($custom_left_menu_items as $custom_left_menu_item) {
                 $item_value_array = $this->_get_item_array_value($custom_left_menu_item, $left_menu_items);
                 $is_sub_menu = get_array_value($custom_left_menu_item, "is_sub_menu");
@@ -201,13 +214,12 @@ class Left_menu {
                 }
             }
         }
-
         if (count($final_left_menu_items)) {
             $view_data["sidebar_menu"] = $final_left_menu_items;
         } else {
             $view_data["sidebar_menu"] = $this->_get_sidebar_menu_items($type);
         }
-
+       
         $view_data["is_preview"] = $is_preview;
         $view_data["login_user"] = $this->ci->login_user;
         return view("includes/left_menu", $view_data);
@@ -231,6 +243,7 @@ class Left_menu {
 
     private function _get_sidebar_menu_items($type = "") {
         $dashboard_menu = array("name" => "dashboard", "url" => "dashboard", "class" => "monitor");
+        
 
         // $selected_dashboard_id = get_setting("user_" . $this->ci->login_user->id . "_dashboard");
         // if ($selected_dashboard_id) {
@@ -276,10 +289,12 @@ class Left_menu {
 
             if (get_setting("module_lead") == "1" && ($this->ci->login_user->is_admin || $access_lead)) {
                 $sidebar_menu["activity"] = array("name" => "activity", "url" => "activity", "class" => "clock");
-            }
+            }   
             $sidebar_menu["leads"] = array("name" => "leads", "url" => "leads/overview", "class" => "layers");
             $sidebar_menu["clients"] = array("name" => "customers", "url" => "clients", "class" => "briefcase");
             $sidebar_menu["payment"] = array("name" => "invoice_payments", "url" => "invoice_payments", "class" => "dollar-sign");
+            $sidebar_menu["transport"] = array("name" => "transport", "url" => "transport", "class" => "truck");
+
 
             $reports_submenu = [];
             $reports_submenu[] = array("name" => "pending_report", "url" => "reports/pending_report", "class" => "trending-up");
@@ -287,12 +302,13 @@ class Left_menu {
             $reports_submenu[] = array("name" => "mis_payment", "url" => "reports/mis_payment", "class" => "trending-up");
             $reports_submenu[] = array("name" => "lead_status_report", "url" => "reports/lead_status_report", "class" => "trending-up");
             $reports_submenu[] = array("name" => "client_status_report", "url" => "reports/client_status_report", "class" => "trending-up");
-
+           
             if (count($reports_submenu)) {
                 $sidebar_menu["reports"] = array("name" => "reports", "url" => "projects/all_timesheets", "class" => "pie-chart",
                     "submenu" => $reports_submenu
                 );
             }
+            // $sidebar_menu["transport"] = array("name" => "transport", "url" => "transport", "class" => "monitor");
 
             // $sidebar_menu["reports"] = array("name" => "reports", "url" => "projects/all_timesheets", "class" => "pie-chart", 
             // "submenu" => $reports_submenu
@@ -486,8 +502,8 @@ class Left_menu {
             if ($this->ci->login_user->is_admin || get_array_value($this->ci->login_user->permissions, "can_manage_all_kinds_of_settings")) {
                 $sidebar_menu["settings"] = array("name" => "settings", "url" => "settings/general", "class" => "settings");
             }
-
             $sidebar_menu = app_hooks()->apply_filters('app_filter_staff_left_menu', $sidebar_menu);
+           
         } else {
             //client menu
             //get the array of hidden menu
@@ -553,7 +569,7 @@ class Left_menu {
 
             $sidebar_menu = app_hooks()->apply_filters('app_filter_client_left_menu', $sidebar_menu);
         }
-
+       
         return $this->position_items_for_default_left_menu($sidebar_menu);
     }
 
@@ -561,14 +577,16 @@ class Left_menu {
     private function position_items_for_default_left_menu($sidebar_menu = array()) {
         foreach ($sidebar_menu as $key => $menu) {
             $position = get_array_value($menu, "position");
+            
             if ($position) {
                 $position = $position - 1;
                 $sidebar_menu = array_slice($sidebar_menu, 0, $position, true) +
-                        array($key => $menu) +
-                        array_slice($sidebar_menu, $position, NULL, true);
+                array($key => $menu) +
+                array_slice($sidebar_menu, $position, NULL, true);
             }
         }
-
+       
+        
         return $sidebar_menu;
     }
 

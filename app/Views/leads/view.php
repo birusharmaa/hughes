@@ -16,7 +16,7 @@
                 data-bs-target="#lead-timeline">
                 <?php echo app_lang('lead'); ?> <?php echo app_lang('timeline'); ?>
             </a>
-        </li>
+        </li>   
         <li>
             <a role="presentation" href="<?php echo_uri("leads/notes/" . $lead_info->id); ?>"
                 data-bs-target="#lead-notes">

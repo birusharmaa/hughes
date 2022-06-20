@@ -13,23 +13,26 @@
 </div>
 <?php echo form_close(); ?>
 
-<!-- <script type="text/javascript">
-    $(document).ready(function () {
-        $("#lead-form").appForm({
-            onSuccess: function (result) {
-                if (result.view === "details") {
-                    appAlert.success(result.message, {duration: 10000});
-                    setTimeout(function () {
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        $("#quotation-form").appForm({
+            onSuccess: function(result) {
+                if (result.data) {
+                    appAlert.success(result.message, {
+                        duration: 10000
+                    });
+                    setTimeout(function() {
                         location.reload();
-                    }, 500);
+                    }, 1000);
                 } else {
-                    $("#lead-table").appTable({newData: result.data, dataId: result.id});
-                    $("#reload-kanban-button:visible").trigger("click");
+                    $("#quotation-table").appTable({
+                        newData: result.data,
+                        dataId: result.id
+                    });
                 }
             }
         });
-        setTimeout(function () {
-            $("#company_name").focus();
-        }, 200);
     });
-</script>     -->
+</script>
+    

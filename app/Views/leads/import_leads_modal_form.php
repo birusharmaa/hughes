@@ -107,7 +107,6 @@
 
 
         });
-
         $previousButton.click(function () {
             $(this).addClass("hide");
             $submitButton.addClass("hide");

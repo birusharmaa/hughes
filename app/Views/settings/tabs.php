@@ -1,4 +1,4 @@
-<?php
+<?php   
 $settings_menu = array(
     "app_settings" => array(
         array("name" => "general", "url" => "settings/general"),
@@ -6,7 +6,7 @@ $settings_menu = array(
         //array("name" => "email", "url" => "settings/email"),
         //array("name" => "email_templates", "url" => "email_templates"),
         // array("name" => "modules", "url" => "settings/modules"),
-        // array("name" => "left_menu", "url" => "left_menus"),
+        array("name" => "left_menu", "url" => "left_menus"),
         // array("name" => "footer", "url" => "settings/footer"),
         array("name" => "notifications", "url" => "settings/notifications"),
         // array("name" => "integration", "url" => "settings/integration"),

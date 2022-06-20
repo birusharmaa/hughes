@@ -33,27 +33,27 @@
 </div>
 
 <div id="page-content" class="clearfix">
-
     <div class="client-widget-section">
         <?php echo view("clients/info_widgets/index"); ?>
     </div>
 
     <ul id="client-tabs" data-bs-toggle="ajax-tab" class="nav nav-tabs scrollable-tabs no-border-top-radius" role="tablist">
-        <li><a  role="presentation" href="<?php echo_uri("clients/contacts/" . $client_info->id); ?>" data-bs-target="#client-contacts"> <?php echo app_lang('contacts'); ?></a></li>
+        <!-- <li><a  role="presentation" href="<?php echo_uri("clients/contacts/" . $client_info->id); ?>" data-bs-target="#client-contacts"> <?php echo app_lang('contacts'); ?></a></li> -->
         <li><a  role="presentation" href="<?php echo_uri("clients/company_info_tab/" . $client_info->id); ?>" data-bs-target="#client-info"> <?php echo app_lang('client_info'); ?></a></li>
-        <li><a  role="presentation" href="<?php echo_uri("clients/projects/" . $client_info->id); ?>" data-bs-target="#client-projects"><?php echo app_lang('projects'); ?></a></li>
-
-        <?php if ($show_invoice_info) { ?>
-            <li><a  role="presentation" href="<?php echo_uri("clients/invoices/" . $client_info->id); ?>" data-bs-target="#client-invoices"> <?php echo app_lang('invoices'); ?></a></li>
-            <li><a  role="presentation" href="<?php echo_uri("clients/payments/" . $client_info->id); ?>" data-bs-target="#client-payments"> <?php echo app_lang('payments'); ?></a></li>
-        <?php } ?>
-        <?php if ($show_estimate_info) { ?>
-            <li><a  role="presentation" href="<?php echo_uri("clients/estimates/" . $client_info->id); ?>" data-bs-target="#client-estimates"> <?php echo app_lang('estimates'); ?></a></li>
-        <?php } ?>
+        <!-- <li><a  role="presentation" href="<?php echo_uri("clients/projects/" . $client_info->id); ?>" data-bs-target="#client-projects"><?php echo app_lang('projects'); ?></a></li> -->
         <?php if ($show_order_info) { ?>
             <li><a  role="presentation" href="<?php echo_uri("clients/orders/" . $client_info->id); ?>" data-bs-target="#client-orders"> <?php echo app_lang('orders'); ?></a></li>
         <?php } ?>
-        <?php if ($show_estimate_request_info) { ?>
+        <?php if ($show_invoice_info) { ?>
+            <!-- <li><a  role="presentation" href="<?php // echo_uri("clients/invoices/" . $client_info->id); ?>" data-bs-target="#client-invoices"> <?php echo app_lang('invoices'); ?></a></li> -->
+            <li><a  role="presentation" href="<?php  echo_uri("clients/payments/" . $client_info->id); ?>" data-bs-target="#client-payments"> <?php echo app_lang('payments'); ?></a></li>
+        <?php } ?>
+
+        <?php  if ($show_estimate_info) { ?>
+            <li><a  role="presentation" href="<?php echo_uri("clients/dispatch_advice/" . $client_info->id); ?>" data-bs-target="#client-estimates"> <?php echo app_lang('dispatch_advice'); ?></a></li>
+        <?php } ?>
+        
+        <?php /* if ($show_estimate_request_info) { ?>
             <li><a  role="presentation" href="<?php echo_uri("clients/estimate_requests/" . $client_info->id); ?>" data-bs-target="#client-estimate-requests"> <?php echo app_lang('estimate_requests'); ?></a></li>
         <?php } ?>
         <?php if ($show_proposal_info) { ?>
@@ -73,7 +73,7 @@
 
         <?php if ($show_expense_info) { ?>
             <li><a  role="presentation" href="<?php echo_uri("clients/expenses/" . $client_info->id); ?>" data-bs-target="#client-expenses"> <?php echo app_lang('expenses'); ?></a></li>
-        <?php } ?>
+        <?php } */  ?>
 
         <?php
         $hook_tabs = app_hooks()->apply_filters('app_filter_client_details_ajax_tab', $client_info->id);

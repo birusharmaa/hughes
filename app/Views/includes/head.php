@@ -81,7 +81,8 @@
     load_css($css_files);
 
     load_js(array(
-        "assets/js/app.all.js"
+        "assets/js/app.all.js",
+        "assets/js/custom.js",
     ));
     ?>
 
