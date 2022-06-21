@@ -122,11 +122,24 @@ for ($i=0;$i<$rowNum;$i++){ ?>
         </div>
     </div>
     <div class="col-md-9">
-        <?php echo $model_info->address_consignee; ?>  <br>
+        <div class="row">
+            <div class="col-md-3">
+                <lable>Item (<?= $num; ?>)</lable> <br>  
+                <lable>Quantity in Kgs</lable> <br>  
+                <lable>Rate</lable> <br>  
+                <lable>GST</lable> <br>  
+            </div>
+            <div class="col-md-9">
+                <lable><?= $products[$i] ?></lable> <br>  
+                <lable><?= $quantity[$i] ?></lable> <br>  
+                <lable><?= $rate[$i] ?></lable> <br>  
+                <lable><?= $gst[$i] ?></lable> <br>  
+            </div>
+        </div>
     </div>  
 </div>
 
-<?php  }?>
+<?php $num++; }?>
 
 
 

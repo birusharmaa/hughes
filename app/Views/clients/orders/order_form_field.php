@@ -351,8 +351,7 @@
             // var ttoal = $("#totalAmnt_" + ids).val();
             let total_value = 0;
             var prodLength = $('.prodd').length;
-
-            console.log(prodLength);
+            
             for (let i = 1; i <= prodLength; i++) {
                 finTot = $("#totalAmnt_" + i).val();
                 total_value = parseInt(finTot) + parseInt(total_value);
@@ -363,6 +362,15 @@
     }
 
     function getTotalAmount(charge) {
+        let total_value = 0;
+        var prodLength = $('.prodd').length;
+        
+        for (let i = 1; i <= prodLength; i++) {
+            finTot = $("#totalAmnt_" + i).val();
+            total_value = parseInt(finTot) + parseInt(total_value);
+            $("#total_amount").val(total_value);
+        }
+
         var total_amount = $("#total_amount").val();
         if(total_amount==''){
             total_amount=0;
