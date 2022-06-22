@@ -44,14 +44,18 @@
         <?php if ($show_order_info) { ?>
             <li><a  role="presentation" href="<?php echo_uri("clients/orders/" . $client_info->id); ?>" data-bs-target="#client-orders"> <?php echo app_lang('orders'); ?></a></li>
         <?php } ?>
+        <?php  if ($show_estimate_info) { ?>
+            <li><a  role="presentation" href="<?php echo_uri("clients/dispatch_advice/" . $client_info->id); ?>" data-bs-target="#client-estimates"> <?php echo app_lang('dispatch_advice'); ?></a></li>
+        <?php } ?>
+        <?php  if ($show_estimate_request_info) { ?>
+            <li><a  role="presentation" href="<?php echo_uri("clients/dispatch/" . $client_info->id); ?>" data-bs-target="#client-estimate-requests"> <?php echo app_lang('dispatch'); ?></a></li>
+        <?php } ?>
         <?php if ($show_invoice_info) { ?>
             <!-- <li><a  role="presentation" href="<?php // echo_uri("clients/invoices/" . $client_info->id); ?>" data-bs-target="#client-invoices"> <?php echo app_lang('invoices'); ?></a></li> -->
             <li><a  role="presentation" href="<?php  echo_uri("clients/payments/" . $client_info->id); ?>" data-bs-target="#client-payments"> <?php echo app_lang('payments'); ?></a></li>
         <?php } ?>
 
-        <?php  if ($show_estimate_info) { ?>
-            <li><a  role="presentation" href="<?php echo_uri("clients/dispatch_advice/" . $client_info->id); ?>" data-bs-target="#client-estimates"> <?php echo app_lang('dispatch_advice'); ?></a></li>
-        <?php } ?>
+        
         
         <?php /* if ($show_estimate_request_info) { ?>
             <li><a  role="presentation" href="<?php echo_uri("clients/estimate_requests/" . $client_info->id); ?>" data-bs-target="#client-estimate-requests"> <?php echo app_lang('estimate_requests'); ?></a></li>

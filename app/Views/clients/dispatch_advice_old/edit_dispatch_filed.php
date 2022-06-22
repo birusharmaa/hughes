@@ -113,13 +113,12 @@ $rate = json_decode($model_info2->rate);
 $total = json_decode($model_info2->total);
 $rowNum = count($products);  
 $num=1;
-$net_total=0;
-        
+
 for ($i=0;$i<$rowNum;$i++){ ?>
 <div class="row">
     <div class="col-md-3">
         <div class="form-group">
-            <lable><strong>Product - Supply (<?= $num; ?>)</strong></lable> <br>    
+            <lable>Product - Supply (<?= $num; ?>)</lable> <br>    
         </div>
     </div>
     <div class="col-md-9">
@@ -129,52 +128,18 @@ for ($i=0;$i<$rowNum;$i++){ ?>
                 <lable>Quantity in Kgs</lable> <br>  
                 <lable>Rate</lable> <br>  
                 <lable>GST</lable> <br>  
-                <lable><strong>Total</strong></lable> <br>  
             </div>
             <div class="col-md-9">
                 <lable><?= $products[$i] ?></lable> <br>  
                 <lable><?= $quantity[$i] ?></lable> <br>  
-                <lable><?= $rate[$i] ?>/-</lable> <br>  
+                <lable><?= $rate[$i] ?></lable> <br>  
                 <lable><?= $gst[$i] ?></lable> <br>  
-                <lable><strong><?php echo $total[$i]; $net_total= $net_total+$total[$i]; ?>/-</strong></lable> <br>  
             </div>
         </div>
     </div>  
 </div>
+
 <?php $num++; }?>
-
-<div class="row">
-    <div class="col-md-3">
-        <div class="form-group">
-            <lable>Freight</lable> <br>    
-        </div>
-    </div>
-    <div class="col-md-9">
-        <?php echo $model_info->freight."/-"; $net_total=$net_total+$model_info->freight; ?>  <br>
-    </div>  
-</div>
-<div class="row">
-    <div class="col-md-3">
-        <div class="form-group">
-            <lable>Application Charges for Rs.</lable> <br>    
-        </div>
-    </div>
-    <div class="col-md-9">
-        <?php echo $model_info->application_charges."/-"; $net_total=$net_total+$model_info->application_charges;  ?>  <br>
-    </div>  
-</div>
-
-<div class="row">
-    <div class="col-md-3">
-        <div class="form-group">
-            <lable><strong>Grand Total</strong></lable> <br>    
-        </div>
-    </div>
-    <div class="col-md-9">
-    <strong><?php echo $net_total; ?>/-</strong><br>
-    </div>  
-</div>
-
 
 
 

@@ -67,6 +67,27 @@ class DispatchAdvice extends Security_Controller
         return $this->template->view('clients/dispatch_advice/modal_form_edit', $view_data);
     }
 
+       /* load edit order modal */
+    function modal_dispatch_order_edit() {
+        $this->access_only_allowed_members();
+
+        $this->validate_submitted_data(array(
+            "id" => "numeric",
+            "cover_id" => "numeric"
+        ));     
+
+        $id = $this->request->getPost('id');
+        $cover_id = $this->request->getPost('cover_id');
+        $view_data['covering_info'] = $this->Dispatch_Covering_model->get_one($cover_id);       
+        $view_data['model_info'] = $this->Orders_model->get_one($id);
+        $view_data['client_info'] = $this->Clients_model->get_one($view_data['model_info']->client_id);       
+        $view_data['transport_info'] = $this->TransporterModel->get_one($view_data['dispatch_info']->transporter_id);   
+        $view_data["custom_fields"] = $this->Custom_fields_model->get_combined_details("orders", $view_data['model_info']->id, $this->login_user->is_admin, $this->login_user->user_type)->getResult();
+        $view_data['dispatch_info'] = $this->Dispatch_model->get_one_where(['order_id' => 
+        $id,'client_id'=>$view_data['model_info']->client_id]); 
+        return $this->template->view('clients/dispatch_advice/model_dispatch_covering', $view_data);
+    }
+
 
 
     function process_order()
@@ -144,7 +165,6 @@ class DispatchAdvice extends Security_Controller
 
     function save_item() {
         $this->check_access_to_store();
-
        
         $this->validate_submitted_data(array(
             "client_id" => "numeric"
@@ -153,8 +173,6 @@ class DispatchAdvice extends Security_Controller
         $order_id = $this->request->getPost("order_id");
         $dispatch_order_id = $this->request->getPost("dispatch_order_id");
         
-        print_r($_POST);
-        die;
         $client_id = $this->request->getPost('client_id');
      
         if($dispatch_order_id!='' && $dispatch_order_id>0){
@@ -169,11 +187,11 @@ class DispatchAdvice extends Security_Controller
                 "road_permit" => $this->request->getPost('road_permit'),              
                 "updated_at" => date("Y-m-d H:i:s"),  
                 "updated_by" => $this->login_user->id  
-            );
-                      
-            $res=$this->Dispatch_model->ci_save($order_data,$dispatch_order_id);                
+            );        
+            $res=$this->Dispatch_model->ci_save($order_data,$dispatch_order_id);     
+         
             $redirect_to = get_uri("clients/view/$client_id");
-            if($res){
+            if($res){               
                 echo json_encode(array("success" => true, "redirect_to" => $redirect_to,  
                     'message' => app_lang('record_saved')));
             }else{  
@@ -193,9 +211,10 @@ class DispatchAdvice extends Security_Controller
                 "distance_in_kms" => $this->request->getPost('distance_in_kms'),
                 "road_permit" => $this->request->getPost('road_permit'),
                 "client_id" => $this->request->getPost('client_id'),
-                "order_id" => $this->request->getPost('order_id'),              
-                "updated_at" => date("Y-m-d H:i:s"),  
-                "updated_by" => $this->login_user->id  
+                "order_id" => $this->request->getPost('order_id'),  
+                "order_staus" => 1,             
+                "created_at" => date("Y-m-d H:i:s"),  
+                "created_by" => $this->login_user->id  
             );
       
             $order_id = $this->Dispatch_model->ci_save($order_data);
@@ -360,9 +379,39 @@ class DispatchAdvice extends Security_Controller
         echo json_encode(array("data" => $result));
     }
 
-    /* prepare a row of order list table */
+    /* prepare a row of dispatch Advice  list table */
 
     private function _make_row($data)
+    {      
+        $order_url = "";
+        if ($this->login_user->user_type == "staff") {
+            $order_url = anchor(get_uri("orders/view/" . $data->id), get_order_id($data->id));
+        } else {
+            //for client
+            $order_url = anchor(get_uri("orders/preview/" . $data->id), get_order_id($data->id));
+        }
+     
+        $client = anchor(get_uri("clients/view/" . $data->client_id), $data->company_name);
+
+        $row_data = array(
+            $order_url,
+            $client,
+            format_to_date($data->order_date, false),
+            to_currency($data->total_amount)
+        );  
+  
+    
+        $row_data[] = js_anchor($data->dispatch_status_title, array("style" => "background-color: $data->dispatch_status_color", "class" => "badge", "data-id" => $data->id, "data-value" => $data->dispatch_status_id, "data-act" => "update-order-status"));
+
+        $row_data[] = modal_anchor(get_uri("DispatchAdvice/modal_form_edit"), "<i data-feather='edit' class='icon-16'></i>", array("class" => "edit", "title" => app_lang('edit_order'), "data-post-id" => $data->id))
+                . js_anchor("<i data-feather='x' class='icon-16'></i>", array('title' => app_lang('delete_order'), "class" => "delete","data-id" => $data->id."*".$data->client_id, "data-action-url" => get_uri("DispatchAdvice/delete"), "data-action" => "delete"))."<a href='". get_uri("DispatchAdvice/download_order/$data->id")."' download><i data-feather='download' class='icon-16'></i></a>";
+        return $row_data;
+    }
+
+    
+    /* prepare a row of dispatch coverning table */
+
+    private function _make_row2($data)
     {              
 
         $order_url = "";
@@ -381,16 +430,15 @@ class DispatchAdvice extends Security_Controller
             format_to_date($data->order_date, false),
             to_currency($data->total_amount)
         );  
+  
+        if($data->covering_status){
+            $row_data[] = js_anchor($data->cover_status_name, array("style" => "background-color: $data->cover_status_color", "class" => "badge", "data-id" => $data->id, "data-post-cover_id"=>$data->covering_id, "data-value" => $data->dispatch_status_id, "data-act" => "update-order-status"));
+        }else{
+            $row_data[] = js_anchor($data->cover_status_name, array("class" => "badge", "data-id" => $data->id, "data-value" => $data->dispatch_status_id, "data-post-cover_id"=>$data->covering_id, "data-act" => "update-order-status"));
+        }     
 
-        if ($this->login_user->user_type == "staff") {
-            $row_data[] = js_anchor($data->order_status_title, array("style" => "background-color: $data->order_status_color", "class" => "badge", "data-id" => $data->id, "data-value" => $data->status_id, "data-act" => "update-order-status"));
-        } else {
-            $row_data[] = "<span style='background-color: $data->order_status_color;' class='badge'>$data->order_status_title</span>";
-        }
-      //  $row_data[] = anchor(get_uri("orders/download_order/" . $data->id), get_order_id($data->id));
-
-        $row_data[] = modal_anchor(get_uri("DispatchAdvice/modal_form_edit"), "<i data-feather='edit' class='icon-16'></i>", array("class" => "edit", "title" => app_lang('edit_order'), "data-post-id" => $data->id))
-                . js_anchor("<i data-feather='x' class='icon-16'></i>", array('title' => app_lang('delete_order'), "class" => "delete", "data-id" => $data->id, "data-action-url" => get_uri("DispatchAdvice/delete"), "data-action" => "delete"))."<a href='". get_uri("DispatchAdvice/download_order/$data->id")."' download><i data-feather='download' class='icon-16'></i></a>";
+        $row_data[] = modal_anchor(get_uri("DispatchAdvice/modal_dispatch_order_edit"), "<i data-feather='edit' class='icon-16'></i>", array("class" => "edit", "title" => app_lang('edit_order'), "data-post-id" => $data->id, "data-post-cover_id"=>$data->covering_id))
+                . js_anchor("<i data-feather='x' class='icon-16'></i>", array('title' => app_lang('delete_order'), "class" => "delete","data-id" => $data->covering_id, "data-action-url" => get_uri("DispatchAdvice/delete_order_covering"), "data-action" => "delete"))."<a href='". get_uri("DispatchAdvice/download_order_cover/$data->covering_id")."'><i data-feather='download' class='icon-16'></i></a>";
         return $row_data;
     }
 
@@ -406,11 +454,45 @@ class DispatchAdvice extends Security_Controller
         $view_data['model_info'] = $this->Orders_model->get_one($order_id);
         $view_data['model_info2'] = $this->Order_items_model->get_one_where(['order_id' => $order_id]);
         $view_data['client_info'] = $this->Clients_model->get_one($view_data['model_info']->client_id);
-        $dompdf->loadHtml($this->template->view('clients/orders/order_processing_pdf', $view_data));
+        $view_data['dispatch_info'] = $this->Dispatch_model->get_one_where(['order_id' => 
+        $order_id,'client_id'=>$view_data['model_info']->client_id]); 
+        $view_data['transport_info'] = $this->TransporterModel->get_one($view_data['dispatch_info']->transporter_id);   
+        $view_data['user_info'] = $this->Users_model->get_one($view_data['model_info']->client_id);
+     
+
+        // return $this->template->view('clients/dispatch_advice/dispatch_advice_pdf', $view_data);
+        // die;
+        $dompdf->loadHtml($this->template->view('clients/dispatch_advice/dispatch_advice_pdf', $view_data));
         $dompdf->setPaper('A4', 'portrait');
         $dompdf->render();
         $dompdf->stream();
     }
+
+
+    function download_order_cover($cover_id = 0){   
+        $dompdf = new Dompdf();
+      
+
+        if($cover_id>0){
+            $view_data['covering_info'] = $this->Dispatch_Covering_model->get_one($cover_id);       
+            $view_data['model_info'] = $this->Orders_model->get_one($view_data['covering_info']->client_id);
+            $view_data['client_info'] = $this->Clients_model->get_one($view_data['model_info']->client_id);       
+            $view_data['dispatch_info'] = $this->Dispatch_model->get_one_where(['order_id' => 
+            $view_data['covering_info']->order_id,'client_id'=>$view_data['model_info']->client_id]); 
+            $view_data['transport_info'] = $this->TransporterModel->get_one($view_data['dispatch_info']->transporter_id);   
+            $view_data["custom_fields"] = $this->Custom_fields_model->get_combined_details("orders", $view_data['model_info']->id, $this->login_user->is_admin, $this->login_user->user_type)->getResult();
+      
+    
+            // return $this->template->view('clients/dispatch_advice/dispatch_covering_pdf', $view_data);
+            // die;
+            $dompdf->loadHtml($this->template->view('clients/dispatch_advice/dispatch_covering_pdf', $view_data));
+            $dompdf->setPaper('A4', 'portrait');
+            $dompdf->render();
+            $dompdf->stream();
+        }
+  
+    }
+
 
 
     private function _get_clients_dropdown()
@@ -423,48 +505,80 @@ class DispatchAdvice extends Security_Controller
         return $clients_dropdown;
     }
 
-    /* add, edit or clone an order */
+    /* add, edit dispatch covering */
 
     function save()
     {
-   
-        $this->access_only_allowed_members();
-        $client_id = $this->request->getPost('id');
-        $id = $this->request->getPost('order_id');
+        $this->check_access_to_store();
+       
+        $this->validate_submitted_data(array(
+            "client_id" => "numeric"
+        ));     
+        $order_id = $this->request->getPost("order_id");
+        $cover_id = $this->request->getPost("cover_id");        
+        $client_id = $this->request->getPost('client_id');
+     
+        if($cover_id>0){
+            /* edit order item */
+            $order_data = array(
+                "invoice_no" => $this->request->getPost('invoice_no'),
+                "invoice_date" => $this->request->getPost('invoice_date'),
+                "invoice_amount" => $this->request->getPost('invoice_amount'),
+                "delivery_note" => $this->request->getPost('delivery_note'),
+                "delivery_date" => $this->request->getPost('delivery_date'),
+                "docket_no" => $this->request->getPost('docket_no'),
+                "docket_date" => $this->request->getPost('docket_date'), 
+                "order_status" => 1,   
+                "order_id"  => $this->request->getPost('order_id'),    
+                "client_id"  => $this->request->getPost('client_id'),           
+                "updated_at" => date("Y-m-d H:i:s"),  
+                "updated_by" => $this->login_user->id  
+            );        
+            $res=$this->Dispatch_Covering_model->ci_save($order_data,$cover_id);     
+         
+            $redirect_to = get_uri("clients/view/$client_id");
+            if($res){               
+                echo json_encode(array("success" => true, "redirect_to" => $redirect_to,  
+                    'message' => app_lang('record_saved')));
+            }else{  
+                echo json_encode(array("success" => false,
+                "redirect_to" => $redirect_to, 
+                'message' => app_lang('error_occurred')));
+            }
+          
+        }else{
+            /* add new order item */
+            $order_data = array(
+                "invoice_no" => $this->request->getPost('invoice_no'),
+                "invoice_date" => $this->request->getPost('invoice_date'),
+                "invoice_amount" => $this->request->getPost('invoice_amount'),
+                "delivery_note" => $this->request->getPost('delivery_note'),
+                "delivery_date" => $this->request->getPost('delivery_date'),
+                "docket_no" => $this->request->getPost('docket_no'),
+                "docket_date" => $this->request->getPost('docket_date'), 
+                "order_status" => 1, 
+                "order_id"  => $this->request->getPost('order_id'),    
+                "client_id"  => $this->request->getPost('client_id'),             
+                "created_at" => date("Y-m-d H:i:s"),  
+                "created_by" => $this->login_user->id  
+            );
+      
+            $order_id = $this->Dispatch_Covering_model->ci_save($order_data);
 
-        $order_data = array(
-            "client_id" => $client_id,
-            "order_date" => $this->request->getPost('purchase_date'),
-            "purchase_order" => $this->request->getPost('purchase_order'),
-            "address_consignee" => $this->request->getPost('address_consignee'),
-            "application_charges" => $this->request->getPost('application_charges'),
-            "total_amount" => $this->request->getPost('total_amount'),
-            "freight" => $this->request->getPost('freight'),
-            "mode_of_transportation" => $this->request->getPost('mode_of_transportation'),
-            "place" => $this->request->getPost('place'),
-            "name" => $this->request->getPost('name'),
-            "date" => $this->request->getPost('date'),
-            "purchase_order_receipt" => $this->request->getPost('purchase_order_receipt'),
-            "billing_to_accounts" => $this->request->getPost('billing_to_accounts'),
-            "despatch" => $this->request->getPost('despatch'),
-            "actual_despatch" => $this->request->getPost('actual_despatch'),
-            "despatch_of_bills" => $this->request->getPost('despatch_of_bills'),
-            "created_by" => $_SESSION['user_id'],
-        );
-        
-        //check if the status has been changed,
-        //if so, send notification
-        $order_info = $this->Orders_model->get_one($id);
-        if ($order_info->status_id !== $this->request->getPost('status_id')) {
-            log_notification("order_status_updated", array("order_id" => $id));
-        }        
-        $order_id = $this->Orders_model->ci_save($order_data, $id);
-        if ($order_id) {
-            save_custom_fields("orders", $order_id, $this->login_user->is_admin, $this->login_user->user_type);
-            
-            echo json_encode(array("success" => true, "data" => $this->_row_data($order_id), 'id' => $order_id, 'message' => app_lang('record_saved')));
-        } else {
-            echo json_encode(array("success" => false, 'message' => app_lang('error_occurred')));
+           
+            if($order_id){
+                $redirect_to = get_uri("clients/view/$client_id");
+                echo json_encode(array("success" => true, "redirect_to" => $redirect_to,  
+                'message' => app_lang('record_saved')));
+                  
+            }else{
+                $redirect_to = get_uri("clients/view/$client_id");
+                echo json_encode(array("success" => false,
+                "redirect_to" => $redirect_to, 
+                'message' => app_lang('error_occurred')));
+            }
+         
+          
         }
     }
 
@@ -474,28 +588,61 @@ class DispatchAdvice extends Security_Controller
     {
         $this->access_only_allowed_members();
 
-        $this->validate_submitted_data(array(
-            "id" => "required|numeric"
-        ));         
-
+      
         $id = $this->request->getPost('id');
-        if ($this->request->getPost('undo')) {
-            if ($this->Orders_model->delete($id, true)) {
-                echo json_encode(array("success" => true, "data" => $this->_row_data($id), "message" => app_lang('record_undone')));
+        $ids = explode('*',$id);
+        $order_id = $ids[0];
+        $client_id =  $ids[1];
+        $dispatch_info= $this->Dispatch_model->get_one_where(['order_id' => 
+        $order_id,'client_id'=>$client_id]); 
+        if($dispatch_info){
+            if ($this->request->getPost('undo')) {
+                if ($this->Dispatch_model->delete($id, true)) {
+                    echo json_encode(array("success" => true, "data" => $this->_row_data($id), "message" => app_lang('record_undone')));
+                } else {
+                    echo json_encode(array("success" => false, app_lang('error_occurred')));
+                }
             } else {
-                echo json_encode(array("success" => false, app_lang('error_occurred')));
+                if ($this->Dispatch_model->delete($dispatch_info->id)) {                 
+                    echo json_encode(array("success" => true, 'message' => app_lang('record_deleted')));
+                } else {
+                    echo json_encode(array("success" => false, 'message' => app_lang('record_cannot_be_deleted')));
+                }
             }
-        } else {
-            if ($this->Orders_model->delete($id)) {
-                $options = array("order_id" => $id);
-                $item_info = $this->Order_items_model->get_details($options)->getRow();
-                $this->Order_items_model->delete($item_info->id);
-                echo json_encode(array("success" => true, 'message' => app_lang('record_deleted')));
-            } else {
-                echo json_encode(array("success" => false, 'message' => app_lang('record_cannot_be_deleted')));
-            }
+        }else{
+            echo json_encode(array("success" => false, 'message' => app_lang('record_cannot_be_deleted')));
         }
+        
     }
+
+      /* delete or undo an order Covering */
+
+      function delete_order_covering()
+      {
+          $this->access_only_allowed_members();
+  
+        
+          $id = $this->request->getPost('id');
+         
+          if($id>0){
+              if ($this->request->getPost('undo')) {
+                  if ($this->Dispatch_Covering_model->delete($id, true)) {
+                      echo json_encode(array("success" => true, "data" => $this->_row_data($id), "message" => app_lang('record_undone')));
+                  } else {
+                      echo json_encode(array("success" => false, app_lang('error_occurred')));
+                  }
+              } else {
+                  if ($this->Dispatch_Covering_model->delete($id)) {                 
+                      echo json_encode(array("success" => true, 'message' => app_lang('record_deleted')));
+                  } else {
+                      echo json_encode(array("success" => false, 'message' => app_lang('record_cannot_be_deleted')));
+                  }
+              }
+          }else{
+              echo json_encode(array("success" => false, 'message' => app_lang('record_cannot_be_deleted')));
+          }
+          
+      }
 
     /* load order details view */
 
@@ -738,6 +885,27 @@ class DispatchAdvice extends Security_Controller
         }     
         echo json_encode(array("data" => $result));
     }
+
+      /* list of dispatch order advice of a specific client, prepared for datatable  */
+
+      function dispatch_covering_list_data_of_client($client_id)
+      {
+          validate_numeric_value($client_id);
+          $this->check_access_to_store();
+          $custom_fields = $this->Custom_fields_model->get_available_fields_for_table("orders", $this->login_user->is_admin, $this->login_user->user_type);
+  
+          $options = array("client_id" => $client_id, 
+          "order_status" => 3,
+          "custom_fields" => $custom_fields, 
+          "custom_field_filter" => $this->prepare_custom_field_filter_values("orders", $this->login_user->is_admin, $this->login_user->user_type));
+        
+          $list_data = $this->Dispatch_model->get_details_dispatch_advice($options)->getResult();      
+          $result = array();
+          foreach ($list_data as $data) {
+              $result[] = $this->_make_row2($data, $custom_fields);
+          }     
+          echo json_encode(array("data" => $result));
+      }
 }
 
 /* End of file orders.php */

@@ -230,14 +230,14 @@ class Orders_model extends Crud_model {
 
       
         $sql = "SELECT thewings_orders.*, thewings_order_items.`id` as order_item_id, thewings_order_items.`title`, thewings_order_items.`description`, thewings_order_items.`products`, thewings_order_items.`gst`, thewings_order_items.`affected_area`, thewings_order_items.`pestgo_gel`, thewings_order_items.`quantity`, thewings_order_items.`unit_type`, thewings_order_items.`rate`, thewings_order_items.`total`, 
-        thewings_order_items.`order_id`,  thewings_clients.`company_name`, thewings_clients.`father_name`, thewings_clients.`lead_source_id`, thewings_clients.`address`, thewings_clients.`city`, thewings_clients.`state`, thewings_clients.`zip`, thewings_clients.`country`, thewings_clients.`nature_of_industry`, thewings_clients.`name_of_contact_person`, thewings_clients.`designation`, thewings_clients.`mobile`, thewings_clients.`phone`, thewings_clients.`email`, thewings_clients.`website`,  thewings_clients.`product`, thewings_clients.`affected_area`, thewings_clients.`cds_upload`, thewings_clients.`enquiry_date`, thewings_clients.`remarks`, thewings_clients.`gst_number`, thewings_clients.`currency_symbol`, thewings_clients.`currency`,thewings_clients.`disable_online_payment`, thewings_clients.`group_ids`,thewings_dispatch_advice.`order_staus` AS dispatch_order_status
+        thewings_order_items.`order_id`,  thewings_clients.`company_name`, thewings_clients.`father_name`, thewings_clients.`lead_source_id`, thewings_clients.`address`, thewings_clients.`city`, thewings_clients.`state`, thewings_clients.`zip`, thewings_clients.`country`, thewings_clients.`nature_of_industry`, thewings_clients.`name_of_contact_person`, thewings_clients.`designation`, thewings_clients.`mobile`, thewings_clients.`phone`, thewings_clients.`email`, thewings_clients.`website`,  thewings_clients.`product`, thewings_clients.`affected_area`, thewings_clients.`cds_upload`, thewings_clients.`enquiry_date`, thewings_clients.`remarks`, thewings_clients.`gst_number`, thewings_clients.`currency_symbol`, thewings_clients.`currency`,thewings_clients.`disable_online_payment`, thewings_clients.`group_ids`
         FROM `thewings_orders` 
         LEFT JOIN thewings_order_items ON thewings_orders.id = thewings_order_items.order_id
         LEFT JOIN thewings_clients ON thewings_orders.client_id = thewings_clients.id
-        LEFT JOIN thewings_dispatch_advice ON thewings_orders.id = thewings_dispatch_advice.order_id 
         WHERE thewings_orders.client_id=".$options["client_id"]." AND thewings_orders.order_staus=3 AND thewings_orders.deleted=0;";
-        return $this->db->query($sql);
 
+
+        return $this->db->query($sql);
 
     }
 

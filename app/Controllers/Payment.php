@@ -111,7 +111,7 @@ class Payment extends Security_Controller
                 . js_anchor("<i data-feather='x' class='icon-16'></i>", array('title' => app_lang('delete_payment'), "class" => "delete", "data-id" => $data->id, "data-action-url" => get_uri("Payment/delete"), "data-action" => "delete-confirmation"));
         }
         return array(
-            $data->invoice_id   ,
+            $data->invoice_id,
             $data->payment_date,
             $data->payment_method_title,
             $data->note,

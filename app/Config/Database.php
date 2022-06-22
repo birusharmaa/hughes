@@ -35,7 +35,7 @@ class Database extends Config
 		'hostname' => 'Localhost',
 		'username' => 'root',
 		'password' => '',
-		'database' => 'hughes',
+		'database' => 'new_hughes',
 		'DBDriver' => 'MySQLi',
 		'DBPrefix' => 'thewings_',
 		'pConnect' => false,

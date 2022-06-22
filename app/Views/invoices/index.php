@@ -43,7 +43,7 @@
     if ("<?php echo $can_edit_invoices ?>") {
     optionVisibility = true;
     }
-
+    
     $(selector).appTable({
     source: '<?php echo_uri("invoices/list_data") ?>',
             dateRangeType: dateRange,

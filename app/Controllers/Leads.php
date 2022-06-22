@@ -247,10 +247,12 @@ class Leads extends Security_Controller
         );
 
         $list_data = $this->Clients_model->get_details($options)->getResult();
+      
         $result = array();
         foreach ($list_data as $data) {
             $result[] = $this->_make_row($data, $custom_fields);
         }
+      
         echo json_encode(array("data" => $result));
     }
 
@@ -272,6 +274,7 @@ class Leads extends Security_Controller
 
     private function _make_row($data, $custom_fields)
     {
+       
         //primary contact 
         $image_url = get_avatar($data->contact_avatar);
         $contact = "<span class='avatar avatar-xs mr10'><img src='$image_url' alt='...'></span> $data->primary_contact";
@@ -297,10 +300,10 @@ class Leads extends Security_Controller
 
         $row_data[] = js_anchor($data->lead_status_title, array("style" => "background-color: $data->lead_status_color", "class" => "badge", "data-id" => $data->id, "data-value" => $data->lead_status_id, "data-act" => "update-lead-status"));
 
-        foreach ($custom_fields as $field) {
-            $cf_id = "cfv_" . $field->id;
-            $row_data[] = $this->template->view("custom_fields/output_" . $field->field_type, array("value" => $data->$cf_id));
-        }
+        // foreach ($custom_fields as $field) {
+        //     $cf_id = "cfv_" . $field->id;
+        //     $row_data[] = $this->template->view("custom_fields/output_" . $field->field_type, array("value" => $data->$cf_id));
+        // }
 
         $row_data[] = modal_anchor(get_uri("leads/modal_form"), "<i data-feather='edit' class='icon-16'></i>", array("class" => "edit", "title" => app_lang('edit_lead'), "data-post-id" => $data->id))
             . js_anchor("<i data-feather='x' class='icon-16'></i>", array('title' => app_lang('delete_lead'), "class" => "delete", "data-id" => $data->id, "data-action-url" => get_uri("leads/delete"), "data-action" => "delete-confirmation"));

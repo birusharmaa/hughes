@@ -62,6 +62,7 @@ class Roles extends Security_Controller {
             $view_data['order'] = get_array_value($permissions, "order");
             $view_data['client'] = get_array_value($permissions, "client");
             $view_data['lead'] = get_array_value($permissions, "lead");
+            $view_data['transport'] = get_array_value($permissions, "transport");
 
             $view_data['ticket'] = get_array_value($permissions, "ticket");
             $view_data['ticket_specific'] = get_array_value($permissions, "ticket_specific");
@@ -171,6 +172,7 @@ class Roles extends Security_Controller {
         $order = $this->request->getPost('order_permission');
         $client = $this->request->getPost('client_permission');
         $lead = $this->request->getPost('lead_permission');
+        $transport = $this->request->getPost('transport_permission');
 
         $ticket = $this->request->getPost('ticket_permission');
 
@@ -301,6 +303,7 @@ class Roles extends Security_Controller {
             "can_add_or_invite_new_team_members" => $can_add_or_invite_new_team_members,
             "timeline_permission" => $timeline_permission,
             "timeline_permission_specific" => $timeline_permission_specific,
+            "transport" => $transport,
         );
 
         $data = array(

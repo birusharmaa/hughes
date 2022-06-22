@@ -28,6 +28,15 @@ class Team extends Security_Controller {
             $members_dropdown[] = array("id" => $team_member->id, "text" => $team_member->first_name . " " . $team_member->last_name);
         }
 
+        $team_leaders = $this->Users_model->get_all_where(array("deleted" => 0, "role_id" => "3"))->getResult();
+        $leaderss_dropdown = array();
+
+        foreach ($team_leaders as $team_leader) {
+            $leaderss_dropdown[] = array("id" => $team_leader->id, "text" => $team_leader->first_name . " " . $team_leader->last_name);
+        }
+
+
+        $view_data['leaderss_dropdown'] = json_encode($leaderss_dropdown);
         $view_data['members_dropdown'] = json_encode($members_dropdown);
         $view_data['model_info'] = $this->Team_model->get_one($this->request->getPost('id'));
         return $this->template->view('team/modal_form', $view_data);
@@ -46,7 +55,8 @@ class Team extends Security_Controller {
         $id = $this->request->getPost('id');
         $data = array(
             "title" => $this->request->getPost('title'),
-            "members" => $this->request->getPost('members')
+            "members" => $this->request->getPost('members'),
+            "leaders" => $this->request->getPost('leaders')
         );
 
         $save_id = $this->Team_model->ci_save($data, $id);

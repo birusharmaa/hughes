@@ -11,15 +11,22 @@
             <?php echo form_open(get_uri("settings/save_order_settings"), array("id" => "order-settings-form", "class" => "general-form dashed-row", "role" => "form")); ?>
             <div class="card">
 
-                <ul data-bs-toggle="ajax-tab" class="nav nav-tabs bg-white title" role="tablist">
-                    <li><a  role="presentation"  href="javascript:;" data-bs-target="#order-settings-tab"> <?php echo app_lang('order_settings'); ?></a></li>
-                    <li><a role="presentation" href="<?php echo_uri("order_status"); ?>" data-bs-target="#order-status-settings-tab"><?php echo app_lang('order_status'); ?></a></li>
+                <!-- <ul data-bs-toggle="ajax-tab" class="nav nav-tabs bg-white title" role="tablist">
+                    <li><a  role="presentation"  href="javascript:;" data-bs-target="#order-settings-tab"> <?php // echo app_lang('order_settings'); ?></a></li>
+                    <li><a role="presentation" href="<?php //echo_uri("order_status"); ?>" data-bs-target="#order-status-settings-tab"><?php // echo app_lang('order_status'); ?></a></li>
+                    <li><a role="presentation" href="<?php// echo_uri("dispatch_status"); ?>" data-bs-target="#dispatch-status-settings-tab"><?php // echo app_lang('dispatch_status'); ?></a></li>
                     <div class="tab-title clearfix no-border">
                         <div class="title-button-group">
-                            <?php echo modal_anchor(get_uri("order_status/modal_form"), "<i data-feather='plus-circle' class='icon-16'></i> " . app_lang('add_order_status'), array("class" => "btn btn-default hide", "title" => app_lang('add_order_status'), "id" => "order-status-add-btn")); ?>
+                            <?php //echo modal_anchor(get_uri("order_status/modal_form"), "<i data-feather='plus-circle' class='icon-16'></i> " . app_lang('add_order_status'), array("class" => "btn btn-default hide", "title" => app_lang('add_order_status'), "id" => "order-status-add-btn")); ?>
                         </div>
                     </div>
+                </ul> -->
+                <ul data-bs-toggle="ajax-tab" class="nav nav-tabs bg-white title" role="tablist">
+                    <li><a role="presentation" href="javascript:;" data-bs-target="#order-settings-tab"> <?php echo app_lang('order_settings'); ?></a></li>
+                    <li><a role="presentation" href="<?php echo_uri("order_status"); ?>" data-bs-target="#order-status-settings-tab"><?php echo app_lang('order_status'); ?></a></li>
+                    <li><a role="presentation" href="<?php echo_uri("dispatch_status"); ?>" data-bs-target="#dispatch-status-settings-tab"><?php echo app_lang('dispatch_status'); ?></a></li>
                 </ul>
+
 
                 <div class="tab-content">
                     <div role="tabpanel" class="tab-pane fade" id="order-settings-tab">
@@ -149,6 +156,7 @@
                         </div>
                     </div>
                     <div role="tabpanel" class="tab-pane fade" id="order-status-settings-tab"></div>
+                    <div role="tabpanel" class="tab-pane fade" id="dispatch-status-settings-tab"></div>
                 </div>
             </div>
             <?php echo form_close(); ?>
@@ -193,9 +201,6 @@
             showCropBox(this);
         });
 
-        //show add order status button
-        $("a[data-bs-target='#order-status-settings-tab']").click(function () {
-            $("#order-status-add-btn").removeClass("hide");
-        });
+       
     });
 </script>

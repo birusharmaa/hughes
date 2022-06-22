@@ -1,10 +1,8 @@
 <?php
 
 namespace App\Controllers;
-
 use Dompdf\Dompdf;
-
-class Orders extends Security_Controller
+class DispatchAdvice extends Security_Controller
 {
 
     function __construct()
@@ -12,6 +10,7 @@ class Orders extends Security_Controller
         parent::__construct();
         $this->init_permission_checker("order");
         require_once 'dompdf/autoload.inc.php';
+        
     }
 
     function index()
@@ -35,8 +34,7 @@ class Orders extends Security_Controller
     }
 
 
-    function modal_form()
-    {
+    function modal_form(){        
         $orderId = $this->request->getPost('id');
         $clientID = $this->request->getPost('client');
         $view_data['order_info'] = $this->Orders_model->get_one($orderId);
@@ -44,25 +42,29 @@ class Orders extends Security_Controller
         return $this->template->view('clients/orders/modal_form', $view_data);
     }
 
-
+    
     /* load edit order modal */
-    function modal_form_edit()
-    {
+    function modal_form_edit() {
         $this->access_only_allowed_members();
 
         $this->validate_submitted_data(array(
             "id" => "numeric",
             "client_id" => "numeric"
-        ));
+        ));     
 
-        $client_id = $this->request->getPost('client_id');
-
+      
+        $view_data['transport_info'] = $this->TransporterModel->get_details()->getResult();      
         $view_data['model_info'] = $this->Orders_model->get_one($this->request->getPost('id'));
-        $view_data['model_info2'] = $this->Order_items_model->get_one_where(['order_id' => $this->request->getPost('id')]);
+        $view_data['model_info2'] = $this->Order_items_model->get_one_where(['order_id' => 
+        $this->request->getPost('id')]);
         $view_data['client_info'] = $this->Clients_model->get_one($view_data['model_info']->client_id);
-        $view_data["custom_fields"] = $this->Custom_fields_model->get_combined_details("orders", $view_data['model_info']->id, $this->login_user->is_admin, $this->login_user->user_type)->getResult();
+       
+        $view_data['dispatch_info'] = $this->Dispatch_model->get_one_where(['order_id' => 
+        $this->request->getPost('id'),'client_id'=>$view_data['model_info']->client_id]); 
 
-        return $this->template->view('clients/orders/modal_form_edit', $view_data);
+        $view_data["custom_fields"] = $this->Custom_fields_model->get_combined_details("orders", $view_data['model_info']->id, $this->login_user->is_admin, $this->login_user->user_type)->getResult();
+        
+        return $this->template->view('clients/dispatch_advice/modal_form_edit', $view_data);
     }
 
 
@@ -140,124 +142,76 @@ class Orders extends Security_Controller
 
     /* add or edit an order item */
 
-    function save_item()
-    {
+    function save_item() {
         $this->check_access_to_store();
+
+       
         $this->validate_submitted_data(array(
             "client_id" => "numeric"
         ));
-
-
+    
         $order_id = $this->request->getPost("order_id");
-        $orderItem_id = $this->request->getPost("orderItem_id");
+        $dispatch_order_id = $this->request->getPost("dispatch_order_id");
+        
         $client_id = $this->request->getPost('client_id');
-
-        if ($order_id != '' && $order_id > 0) {
+     
+        if($dispatch_order_id!='' && $dispatch_order_id>0){
             /* edit order item */
             $order_data = array(
-                "order_date" => $this->request->getPost('purchase_date'),
-                "purchase_order" => $this->request->getPost('purchase_order'),
-                "address_consignee" => $this->request->getPost('address_consignee'),
-                "application_charges" => $this->request->getPost('application_charges'),
-                "total_amount" => $this->request->getPost('total_amount'),
-                "freight" => $this->request->getPost('freight'),
-                "mode_of_transportation" => $this->request->getPost('mode_of_transportation'),
-                "place" => $this->request->getPost('place'),
-                "name" => $this->request->getPost('name'),
-                "date" => $this->request->getPost('date'),
-                "purchase_order_receipt" => $this->request->getPost('purchase_order_receipt'),
-                "billing_to_accounts" => $this->request->getPost('billing_to_accounts'),
-                "despatch" => $this->request->getPost('despatch'),
-                "actual_despatch" => $this->request->getPost('actual_despatch'),
-                "despatch_of_bills" => $this->request->getPost('despatch_of_bills'),
-                "note" => "",
-                "status_id" => 1
-            );
-
-            $this->Orders_model->ci_save($order_data, $order_id);
-            $order_item_data = array(
-                "products" => json_encode($this->request->getPost("products")),
-                "quantity" => json_encode($this->request->getPost("qty")),
-                "rate" => json_encode($this->request->getPost("rate")),
-                "gst" => json_encode($this->request->getPost("gst")),
-                "total" => json_encode($this->request->getPost("totalAmnt")),
-                "affected_area" => json_encode($this->request->getPost("affected_area")),
-                "pestgo_gel" => json_encode($this->request->getPost("pestgo_gel"))
-            );
-            $res = $this->Order_items_model->ci_save($order_item_data, $orderItem_id);
+                "advice_no" => $this->request->getPost('advice_no'),
+                "staff" => $this->request->getPost('staff'),
+                "vendor_code" => $this->request->getPost('vendor_code'),
+                "destination" => $this->request->getPost('destination'),
+                "transporter_id" => $this->request->getPost('transporter_id'),
+                "distance_in_kms" => $this->request->getPost('distance_in_kms'),
+                "road_permit" => $this->request->getPost('road_permit'),              
+                "updated_at" => date("Y-m-d H:i:s"),  
+                "updated_by" => $this->login_user->id  
+            );        
+            $res=$this->Dispatch_model->ci_save($order_data,$dispatch_order_id);     
+         
             $redirect_to = get_uri("clients/view/$client_id");
-            if ($res) {
-                echo json_encode(array(
-                    "success" => true, "redirect_to" => $redirect_to,
-                    'message' => app_lang('record_saved')
-                ));
-            } else {
-                echo json_encode(array(
-                    "success" => false,
-                    "redirect_to" => $redirect_to,
-                    'message' => app_lang('error_occurred')
-                ));
+            if($res){               
+                echo json_encode(array("success" => true, "redirect_to" => $redirect_to,  
+                    'message' => app_lang('record_saved')));
+            }else{  
+                echo json_encode(array("success" => false,
+                "redirect_to" => $redirect_to, 
+                'message' => app_lang('error_occurred')));
             }
-        } else {
+          
+        }else{
             /* add new order item */
             $order_data = array(
+                "advice_no" => $this->request->getPost('advice_no'),
+                "staff" => $this->request->getPost('staff'),
+                "vendor_code" => $this->request->getPost('vendor_code'),
+                "destination" => $this->request->getPost('destination'),
+                "transporter_id" => $this->request->getPost('transporter_id'),
+                "distance_in_kms" => $this->request->getPost('distance_in_kms'),
+                "road_permit" => $this->request->getPost('road_permit'),
                 "client_id" => $this->request->getPost('client_id'),
-                "order_date" => $this->request->getPost('purchase_date'),
-                "purchase_order" => $this->request->getPost('purchase_order'),
-                "address_consignee" => $this->request->getPost('address_consignee'),
-                "application_charges" => $this->request->getPost('application_charges'),
-                "total_amount" => $this->request->getPost('total_amount'),
-                "freight" => $this->request->getPost('freight'),
-                "mode_of_transportation" => $this->request->getPost('mode_of_transportation'),
-                "place" => $this->request->getPost('place'),
-                "name" => $this->request->getPost('name'),
-                "date" => $this->request->getPost('date'),
-                "purchase_order_receipt" => $this->request->getPost('purchase_order_receipt'),
-                "billing_to_accounts" => $this->request->getPost('billing_to_accounts'),
-                "despatch" => $this->request->getPost('despatch'),
-                "actual_despatch" => $this->request->getPost('actual_despatch'),
-                "despatch_of_bills" => $this->request->getPost('despatch_of_bills'),
-                "created_by" => $this->login_user->id,
-                "note" => "",
-                "status_id" => 1,
+                "order_id" => $this->request->getPost('order_id'),              
+                "created_at" => date("Y-m-d H:i:s"),  
+                "created_by" => $this->login_user->id  
             );
+      
+            $order_id = $this->Dispatch_model->ci_save($order_data);
 
-            $order_id = $this->Orders_model->ci_save($order_data);
-            if ($order_id) {
-                $order_item_data = array(
-                    "products" => json_encode($this->request->getPost("products")),
-                    "quantity" => json_encode($this->request->getPost("qty")),
-                    "rate" => json_encode($this->request->getPost("rate")),
-                    "gst" => json_encode($this->request->getPost("gst")),
-                    "total" => json_encode($this->request->getPost("totalAmnt")),
-                    "affected_area" => json_encode($this->request->getPost("affected_area")),
-                    "pestgo_gel" => json_encode($this->request->getPost("pestgo_gel")),
-                    "created_by" => $this->login_user->id,
-                    "order_id" => $order_id,
-                );
-                $res = $this->Order_items_model->ci_save($order_item_data);
-                if ($res) {
-                    $redirect_to = get_uri("clients/view/$client_id");
-                    echo json_encode(array(
-                        "success" => true, "redirect_to" => $redirect_to,
-                        'message' => app_lang('record_saved')
-                    ));
-                } else {
-                    $redirect_to = get_uri("clients/view/$client_id");
-                    echo json_encode(array(
-                        "success" => false,
-                        "redirect_to" => $redirect_to,
-                        'message' => app_lang('error_occurred')
-                    ));
-                }
-            } else {
+           
+            if($order_id){
                 $redirect_to = get_uri("clients/view/$client_id");
-                echo json_encode(array(
-                    "success" => false,
-                    "redirect_to" => $redirect_to,
-                    'message' => app_lang('error_occurred')
-                ));
+                echo json_encode(array("success" => true, "redirect_to" => $redirect_to,  
+                'message' => app_lang('record_saved')));
+                  
+            }else{
+                $redirect_to = get_uri("clients/view/$client_id");
+                echo json_encode(array("success" => false,
+                "redirect_to" => $redirect_to, 
+                'message' => app_lang('error_occurred')));
             }
+         
+          
         }
     }
 
@@ -379,26 +333,22 @@ class Orders extends Security_Controller
     function list_data($type = "", $id = 0)
     {
         $options["client_id"] = $id;
-
+       
         $this->access_only_allowed_members();
-        $list_data = $this->Orders_model->get_details($options)->getResult();
+
+        $list_data = $this->Orders_model->get_details_dispatch_advice($options)->getResult();
         $result = array();
         foreach ($list_data as $data) {
             $result[] = $this->_make_row($data);
-        }
+        }      
+     
         echo json_encode(array("data" => $result));
     }
 
     /* prepare a row of order list table */
 
     private function _make_row($data)
-    {
-        $orderStatDrop = '';
-        $order_status = $this->Order_status_model->get_details()->getResult();
-        foreach ($order_status as $order_statusData) {
-            $orderStatDrop .= '
-            <li><a class="dropdown-item orderStatusDropdown" href="#" id ="'.$order_statusData->id.'" data-order-id ="'.$data->id.'">' . $order_statusData->title . '</a></li>';
-        }
+    {     
         $order_url = "";
         if ($this->login_user->user_type == "staff") {
             $order_url = anchor(get_uri("orders/view/" . $data->id), get_order_id($data->id));
@@ -406,7 +356,7 @@ class Orders extends Security_Controller
             //for client
             $order_url = anchor(get_uri("orders/preview/" . $data->id), get_order_id($data->id));
         }
-
+     
         $client = anchor(get_uri("clients/view/" . $data->client_id), $data->company_name);
 
         $row_data = array(
@@ -414,18 +364,17 @@ class Orders extends Security_Controller
             $client,
             format_to_date($data->order_date, false),
             to_currency($data->total_amount)
-        );
+        );  
+
         if ($this->login_user->user_type == "staff") {
-            if ($data->order_staus == '3') {
-                $row_data[] = '<button class="badge" type="button" disabled style="background-color:' . $data->order_status_color . '">' . "$data->order_status_title" . '</button>';
-            } else {
-                $row_data[] = '<div class="dropdown">
-                    <button class="badge dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false" style="background-color:' . $data->order_status_color . '">' . "$data->order_status_title" . '</button>
-                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">' . $orderStatDrop . '</ul></div>';
-            }
+            $row_data[] = js_anchor($data->order_status_title, array("style" => "background-color: $data->order_status_color", "class" => "badge", "data-id" => $data->id, "data-value" => $data->status_id, "data-act" => "update-order-status"));
+        } else {
+            $row_data[] = "<span style='background-color: $data->order_status_color;' class='badge'>$data->order_status_title</span>";
         }
-        $row_data[] = modal_anchor(get_uri("orders/modal_form_edit"), "<i data-feather='edit' class='icon-16'></i>", array("class" => "edit", "title" => app_lang('edit_order'), "data-post-id" => $data->id))
-            . js_anchor("<i data-feather='x' class='icon-16'></i>", array('title' => app_lang('delete_order'), "class" => "delete", "data-id" => $data->id, "data-action-url" => get_uri("orders/delete"), "data-action" => "delete")) . "<a href='" . get_uri("orders/download_order/$data->id") . "' download><i data-feather='download' class='icon-16'></i></a>";
+    
+
+        $row_data[] = modal_anchor(get_uri("DispatchAdvice/modal_form_edit"), "<i data-feather='edit' class='icon-16'></i>", array("class" => "edit", "title" => app_lang('edit_order'), "data-post-id" => $data->id))
+                . js_anchor("<i data-feather='x' class='icon-16'></i>", array('title' => app_lang('delete_order'), "class" => "delete","data-id" => $data->id."*".$data->client_id, "data-action-url" => get_uri("DispatchAdvice/delete"), "data-action" => "delete"))."<a href='". get_uri("DispatchAdvice/download_order/$data->id")."' download><i data-feather='download' class='icon-16'></i></a>";
         return $row_data;
     }
 
@@ -436,13 +385,20 @@ class Orders extends Security_Controller
     }
 
 
-    function download_order($order_id = 0)
-    {
+    function download_order($order_id = 0){   
         $dompdf = new Dompdf();
         $view_data['model_info'] = $this->Orders_model->get_one($order_id);
         $view_data['model_info2'] = $this->Order_items_model->get_one_where(['order_id' => $order_id]);
         $view_data['client_info'] = $this->Clients_model->get_one($view_data['model_info']->client_id);
-        $dompdf->loadHtml($this->template->view('clients/orders/order_processing_pdf', $view_data));
+        $view_data['dispatch_info'] = $this->Dispatch_model->get_one_where(['order_id' => 
+        $order_id,'client_id'=>$view_data['model_info']->client_id]); 
+        $view_data['transport_info'] = $this->TransporterModel->get_one($view_data['dispatch_info']->transporter_id);   
+        $view_data['user_info'] = $this->Users_model->get_one($view_data['model_info']->client_id);
+     
+
+        // return $this->template->view('clients/dispatch_advice/dispatch_advice_pdf', $view_data);
+        // die;
+        $dompdf->loadHtml($this->template->view('clients/dispatch_advice/dispatch_advice_pdf', $view_data));
         $dompdf->setPaper('A4', 'portrait');
         $dompdf->render();
         $dompdf->stream();
@@ -463,7 +419,7 @@ class Orders extends Security_Controller
 
     function save()
     {
-
+   
         $this->access_only_allowed_members();
         $client_id = $this->request->getPost('id');
         $id = $this->request->getPost('order_id');
@@ -487,17 +443,17 @@ class Orders extends Security_Controller
             "despatch_of_bills" => $this->request->getPost('despatch_of_bills'),
             "created_by" => $_SESSION['user_id'],
         );
-
+        
         //check if the status has been changed,
         //if so, send notification
         $order_info = $this->Orders_model->get_one($id);
         if ($order_info->status_id !== $this->request->getPost('status_id')) {
             log_notification("order_status_updated", array("order_id" => $id));
-        }
+        }        
         $order_id = $this->Orders_model->ci_save($order_data, $id);
         if ($order_id) {
             save_custom_fields("orders", $order_id, $this->login_user->is_admin, $this->login_user->user_type);
-
+            
             echo json_encode(array("success" => true, "data" => $this->_row_data($order_id), 'id' => $order_id, 'message' => app_lang('record_saved')));
         } else {
             echo json_encode(array("success" => false, 'message' => app_lang('error_occurred')));
@@ -510,27 +466,31 @@ class Orders extends Security_Controller
     {
         $this->access_only_allowed_members();
 
-        $this->validate_submitted_data(array(
-            "id" => "required|numeric"
-        ));
-
+      
         $id = $this->request->getPost('id');
-        if ($this->request->getPost('undo')) {
-            if ($this->Orders_model->delete($id, true)) {
-                echo json_encode(array("success" => true, "data" => $this->_row_data($id), "message" => app_lang('record_undone')));
+        $ids = explode('*',$id);
+        $order_id = $ids[0];
+        $client_id =  $ids[1];
+        $dispatch_info= $this->Dispatch_model->get_one_where(['order_id' => 
+        $order_id,'client_id'=>$client_id]); 
+        if($dispatch_info){
+            if ($this->request->getPost('undo')) {
+                if ($this->Dispatch_model->delete($id, true)) {
+                    echo json_encode(array("success" => true, "data" => $this->_row_data($id), "message" => app_lang('record_undone')));
+                } else {
+                    echo json_encode(array("success" => false, app_lang('error_occurred')));
+                }
             } else {
-                echo json_encode(array("success" => false, app_lang('error_occurred')));
+                if ($this->Dispatch_model->delete($dispatch_info->id)) {                 
+                    echo json_encode(array("success" => true, 'message' => app_lang('record_deleted')));
+                } else {
+                    echo json_encode(array("success" => false, 'message' => app_lang('record_cannot_be_deleted')));
+                }
             }
-        } else {
-            if ($this->Orders_model->delete($id)) {
-                $options = array("order_id" => $id);
-                $item_info = $this->Order_items_model->get_details($options)->getRow();
-                $this->Order_items_model->delete($item_info->id);
-                echo json_encode(array("success" => true, 'message' => app_lang('record_deleted')));
-            } else {
-                echo json_encode(array("success" => false, 'message' => app_lang('record_cannot_be_deleted')));
-            }
+        }else{
+            echo json_encode(array("success" => false, 'message' => app_lang('record_cannot_be_deleted')));
         }
+        
     }
 
     /* load order details view */
@@ -582,7 +542,7 @@ class Orders extends Security_Controller
 
     function download_pdf($order_id = 0, $mode = "download")
     {
-
+     
         if ($order_id) {
             validate_numeric_value($order_id);
             $order_data = get_order_making_data($order_id);
@@ -752,27 +712,7 @@ class Orders extends Security_Controller
         echo json_encode(array("data" => $result));
     }
 
-    /* list of order of a specific client, prepared for datatable  */
-
-    function order_list_data_of_client($client_id)
-    {
-        validate_numeric_value($client_id);
-        $this->check_access_to_store();
-        $custom_fields = $this->Custom_fields_model->get_available_fields_for_table("orders", $this->login_user->is_admin, $this->login_user->user_type);
-
-        $options = array(
-            "client_id" => $client_id,
-            "custom_fields" => $custom_fields,
-            "custom_field_filter" => $this->prepare_custom_field_filter_values("orders", $this->login_user->is_admin, $this->login_user->user_type)
-        );
-
-        $list_data = $this->Orders_model->get_details($options)->getResult();
-        $result = array();
-        foreach ($list_data as $data) {
-            $result[] = $this->_make_row($data, $custom_fields);
-        }
-        echo json_encode(array("data" => $result));
-    }
+  
 
     /* list of dispatch order advice of a specific client, prepared for datatable  */
 
@@ -782,43 +722,40 @@ class Orders extends Security_Controller
         $this->check_access_to_store();
         $custom_fields = $this->Custom_fields_model->get_available_fields_for_table("orders", $this->login_user->is_admin, $this->login_user->user_type);
 
-        $options = array(
-            "client_id" => $client_id,
-            "order_status" => 3,
-            "custom_fields" => $custom_fields,
-            "custom_field_filter" => $this->prepare_custom_field_filter_values("orders", $this->login_user->is_admin, $this->login_user->user_type)
-        );
-
-        $list_data = $this->Orders_model->get_details($options)->getResult();
+        $options = array("client_id" => $client_id, 
+        "order_status" => 3,
+        "custom_fields" => $custom_fields, 
+        "custom_field_filter" => $this->prepare_custom_field_filter_values("orders", $this->login_user->is_admin, $this->login_user->user_type));
+      
+        $list_data = $this->Orders_model->get_details_dispatch_advice($options)->getResult();      
         $result = array();
         foreach ($list_data as $data) {
             $result[] = $this->_make_row($data, $custom_fields);
-        }
+        }     
         echo json_encode(array("data" => $result));
     }
 
 
+    /* list of dispatch order advice of a specific client, prepared for datatable  */
 
-    function status()
+    function dispatch_covering_list_data_of_client($client_id)
     {
-        /**
-         * Lead status change
-         */
-        $order_id = $this->request->getPost('order_id');
-        $statusId = $this->request->getPost('statusId');
-        
-        $data = array(
-            "order_staus" => $statusId,
-        );
-        $data = clean_data($data);
-        $save_id = $this->Orders_model->ci_save($data, $order_id);
-        if ($save_id) {
-            echo json_encode(array("success" => true,  'message' => 'Status Update'));
-        } else {
-            echo json_encode(array("success" => false, 'message' => app_lang('error_occurred')));
-        }
-    }
+        validate_numeric_value($client_id);
+        $this->check_access_to_store();
+        $custom_fields = $this->Custom_fields_model->get_available_fields_for_table("orders", $this->login_user->is_admin, $this->login_user->user_type);
 
+        $options = array("client_id" => $client_id, 
+        "order_status" => 3,
+        "custom_fields" => $custom_fields, 
+        "custom_field_filter" => $this->prepare_custom_field_filter_values("orders", $this->login_user->is_admin, $this->login_user->user_type));
+      
+        $list_data = $this->Dispatch_model->get_details_dispatch_advice($options)->getResult();      
+        $result = array();
+        foreach ($list_data as $data) {
+            $result[] = $this->_make_row2($data, $custom_fields);
+        }     
+        echo json_encode(array("data" => $result));
+    }
 
 }
 

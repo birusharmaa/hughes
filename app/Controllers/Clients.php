@@ -200,7 +200,6 @@ class Clients extends Security_Controller {
     /* list of clients, prepared for datatable  */
 
     function list_data() {
-
         $this->access_only_allowed_members();
         $custom_fields = $this->Custom_fields_model->get_available_fields_for_table("clients", $this->login_user->is_admin, $this->login_user->user_type);
        
@@ -1861,12 +1860,10 @@ class Clients extends Security_Controller {
     }
 
 
-
-    function dispatch_advice($client_id) {
+     /* load dispatch_advice tab  */
+     function dispatch_advice($client_id) {
         $this->access_only_allowed_members();
         $this->can_access_this_client($client_id);
-
-          $this->access_only_allowed_members();
         
         if ($client_id) {
        
@@ -1878,6 +1875,44 @@ class Clients extends Security_Controller {
             return $this->template->view("clients/dispatch_advice/index", $view_data);
         }
     }
+
+
+    /* load dispatch_advice tab  */
+    function dispatch($client_id) {
+    $this->access_only_allowed_members();
+    $this->can_access_this_client($client_id);
+
+    if ($client_id) {    
+        $view_data["client_info"] = $this->Clients_model->get_one($client_id);
+        $view_data['client_id'] = clean_data($client_id);
+        $view_data["custom_field_headers"] = $this->Custom_fields_model->get_custom_field_headers_for_table("orders", $this->login_user->is_admin, $this->login_user->user_type);
+        $view_data["custom_field_filters"] = $this->Custom_fields_model->get_custom_field_filters("orders", $this->login_user->is_admin, $this->login_user->user_type);
+        return $this->template->view("clients/dispatch_advice/dispatch_covering_tab", $view_data);
+    }
+    }
+
+
+
+
+
+
+
+    // function dispatch_advice($client_id) {
+    //     $this->access_only_allowed_members();
+    //     $this->can_access_this_client($client_id);
+
+    //       $this->access_only_allowed_members();
+        
+    //     if ($client_id) {
+       
+    //         $view_data["client_info"] = $this->Clients_model->get_one($client_id);
+    //         $view_data['client_id'] = clean_data($client_id);
+    //         $view_data["custom_field_headers"] = $this->Custom_fields_model->get_custom_field_headers_for_table("orders", $this->login_user->is_admin, $this->login_user->user_type);
+    //         $view_data["custom_field_filters"] = $this->Custom_fields_model->get_custom_field_filters("orders", $this->login_user->is_admin, $this->login_user->user_type);
+         
+    //         return $this->template->view("clients/dispatch_advice/index", $view_data);
+    //     }
+    // }
 }
 
 /* End of file clients.php */

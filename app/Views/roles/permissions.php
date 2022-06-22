@@ -8,7 +8,7 @@
         <div class="card-body">
 
             <ul class="permission-list">
-                <li>
+                <!-- <li>
                     <span data-feather="key" class="icon-14 ml-20"></span>
                     <h5><?php echo app_lang("set_project_permissions"); ?>:</h5>
                     <div>
@@ -103,9 +103,9 @@
                         <label for="can_delete_files"><?php echo app_lang("can_delete_files"); ?></label>
                     </div>
 
-                </li>
+                </li> -->
                 <?php if ($login_user->is_admin) { ?>
-                    <li>
+                    <!-- <li>
                         <span data-feather="key" class="icon-14 ml-20"></span>
                         <h5><?php echo app_lang("administration_permissions"); ?>:</h5>
                         <div>
@@ -126,9 +126,9 @@
                             ?>
                             <label for="can_add_or_invite_new_team_members"><?php echo app_lang("can_add_or_invite_new_team_members"); ?></label>
                         </div>
-                    </li>
+                    </li> -->
                 <?php } ?>
-                <li>
+                <!-- <li>
                     <span data-feather="key" class="icon-14 ml-20"></span>
                     <h5><?php echo app_lang("set_team_members_permission"); ?>:</h5>
 
@@ -199,9 +199,39 @@
                         </div>
                     </div>
 
-                </li>
+                </li> -->
 
                 <li>
+                    <span data-feather="key" class="icon-14 ml-20"></span>
+                    <h5><?php echo app_lang("can_access_transport"); ?></h5>
+                    <div>
+                        <?php
+                        if (is_null($transport)) {
+                            $transport = "";
+                        }
+                        echo form_radio(array(
+                            "id" => "transport_no",
+                            "name" => "transport_permission",
+                            "value" => "",
+                            "class" => "form-check-input",
+                                ), $transport, ($transport === "") ? true : false);
+                        ?>
+                        <label for="transport_no"><?php echo app_lang("no"); ?> </label>
+                    </div>
+                    <div>
+                        <?php
+                        echo form_radio(array(
+                            "id" => "transport_yes",
+                            "name" => "transport_permission",
+                            "value" => "all",
+                            "class" => "form-check-input",
+                                ), $transport, ($transport === "all") ? true : false);
+                        ?>
+                        <label for="transport_yes"><?php echo app_lang("yes"); ?></label>
+                    </div>
+                </li>
+
+                <!-- <li>
                     <span data-feather="key" class="icon-14 ml-20"></span>
                     <h5><?php echo app_lang("set_message_permissions"); ?>:</h5>
                     <div>
@@ -219,9 +249,9 @@
                             <input type="text" value="<?php echo $message_permission_specific; ?>" name="message_permission_specific" id="message_permission_specific_dropdown" class="w100p validate-hidden"  data-rule-required="true" data-msg-required="<?php echo app_lang('field_required'); ?>" placeholder="<?php echo app_lang('choose_members_and_or_teams'); ?>"  />    
                         </div>
                     </div>
-                </li>
+                </li> -->
 
-                <li>
+                <!-- <li>
                     <span data-feather="key" class="icon-14 ml-20"></span>
                     <h5><?php echo app_lang("set_event_permissions"); ?>:</h5>
                     <div>
@@ -230,9 +260,9 @@
                         ?>
                         <label for="disable_event_sharing"><?php echo app_lang("disable_event_sharing"); ?></label>
                     </div>
-                </li>
+                </li> -->
 
-                <li>
+                <!-- <li>
                     <span data-feather="key" class="icon-14 ml-20"></span>
                     <h5><?php echo app_lang("can_manage_team_members_leave"); ?> <span class="help" data-bs-toggle="tooltip" title="Assign, approve or reject leave applications"><span data-feather="help-circle" class="icon-14"></span></span> </h5>
                     <div>
@@ -283,8 +313,8 @@
                             <label for="can_delete_leave_application"><?php echo app_lang("can_delete_leave_application"); ?> <span class="help" data-bs-toggle="tooltip" title="Can delete based on his/her access permission"><i data-feather="help-circle" class="icon-14"></i></span></label>
                         </div>
                     </div>
-                </li>
-                <li>
+                </li> -->
+                <!-- <li>
                     <span data-feather="key" class="icon-14 ml-20"></span>
                     <h5><?php echo app_lang("can_manage_team_members_timecards"); ?> <span class="help" data-bs-toggle="tooltip" title="Add, edit and delete time cards"><i data-feather="help-circle" class="icon-14"></i></span></h5>
                     <div>
@@ -327,9 +357,9 @@
                         </div>
                     </div>
 
-                </li>
+                </li> -->
 
-                <li>
+                <!-- <li>
                     <span data-feather="key" class="icon-14 ml-20"></span>
                     <h5><?php echo app_lang("can_manage_team_members_project_timesheet"); ?></h5>
                     <div>
@@ -371,7 +401,7 @@
                             <input type="text" value="<?php echo $timesheet_manage_permission_specific; ?>" name="timesheet_manage_permission_specific" id="timesheet_manage_permission_specific_dropdown" class="w100p validate-hidden"  data-rule-required="true" data-msg-required="<?php echo app_lang('field_required'); ?>" placeholder="<?php echo app_lang('choose_members_and_or_teams'); ?>"  />
                         </div>
                     </div>
-                </li>
+                </li> -->
 
 
                 <li>
@@ -454,7 +484,7 @@
                         <label for="estimate_yes_own"><?php echo app_lang("yes_only_own_estimates"); ?></label>
                     </div>
                 </li>
-                <li>
+                <!-- <li>
                     <h5><?php echo app_lang("can_access_proposals"); ?></h5>
                     <div>
                         <?php
@@ -481,8 +511,8 @@
                         ?>
                         <label for="proposal_yes"><?php echo app_lang("yes"); ?></label>
                     </div>
-                </li>
-                <li>
+                </li> -->
+                <!-- <li>
                     <span data-feather="key" class="icon-14 ml-20"></span>
                     <h5><?php echo app_lang("can_access_expenses"); ?></h5>
                     <div>
@@ -510,7 +540,7 @@
                         ?>
                         <label for="expense_yes"><?php echo app_lang("yes"); ?></label>
                     </div>
-                </li>
+                </li> -->
                 <li>
                     <span data-feather="key" class="icon-14 ml-20"></span>
                     <h5><?php echo app_lang("can_access_clients_information"); ?> <span class="help" data-bs-toggle="tooltip" title="Hides all information of clients except company name."><i data-feather="help-circle" class="icon-14"></i></span></h5>
@@ -602,7 +632,7 @@
                         <label for="lead_yes_own"><?php echo app_lang("yes_only_own_leads"); ?></label>
                     </div>
                 </li>
-                <li>
+                <!-- <li>
                     <span data-feather="key" class="icon-14 ml-20"></span>
                     <h5><?php echo app_lang("can_access_tickets"); ?></h5>       
                     <div>
@@ -655,8 +685,8 @@
                             <input type="text" value="<?php echo $ticket_specific; ?>" name="ticket_permission_specific" id="ticket_types_specific_dropdown" class="w100p validate-hidden"  data-rule-required="true" data-msg-required="<?php echo app_lang('field_required'); ?>" placeholder="<?php echo app_lang('choose_ticket_types'); ?>"  />
                         </div>
                     </div>
-                </li>
-                <li>
+                </li> -->
+                <!-- <li>
                     <span data-feather="key" class="icon-14 ml-20"></span>
                     <h5><?php echo app_lang("can_manage_announcements"); ?></h5>
                     <div>
@@ -684,7 +714,7 @@
                         ?>
                         <label for="announcement_yes"><?php echo app_lang("yes"); ?></label>
                     </div>
-                </li>
+                </li> -->
                 <li>
                     <span data-feather="key" class="icon-14 ml-20"></span>
                     <h5><?php echo app_lang("can_access_orders"); ?></h5>
@@ -744,7 +774,7 @@
                     </div>
                 </li>
 
-                <li>
+                <!-- <li>
                     <span data-feather="key" class="icon-14 ml-20"></span>
                     <h5><?php echo app_lang("can_manage_team_members_job_information"); ?></h5>
                     <div>
@@ -772,8 +802,8 @@
                         ?>
                         <label for="job_info_manage_permission_yes"><?php echo app_lang("yes"); ?></label>
                     </div>
-                </li>
-                <li>
+                </li> -->
+                <!-- <li>
                     <span data-feather="key" class="icon-14 ml-20"></span>
                     <h5><?php echo app_lang("set_timeline_permissions"); ?>:</h5>
                     <div>
@@ -791,7 +821,7 @@
                             <input type="text" value="<?php echo $timeline_permission_specific; ?>" name="timeline_permission_specific" id="timeline_permission_specific_dropdown" class="w100p validate-hidden"  data-rule-required="true" data-msg-required="<?php echo app_lang('field_required'); ?>" placeholder="<?php echo app_lang('choose_members_and_or_teams'); ?>"  />    
                         </div>
                     </div>
-                </li>
+                </li> -->
             </ul>
 
         </div>

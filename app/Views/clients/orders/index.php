@@ -33,4 +33,32 @@
             summation: [{column: 4, dataType: 'currency'}]
         });
     });
+
+    $(document).on('click', '.orderStatusDropdown', function() {
+        var value =$(this).attr('id');
+        var order_id =$(this).attr('data-order-id');
+        $.ajax({
+            url: "<?php echo_uri("Orders/status") ?>",
+            type: 'POST',
+            data: {
+                "statusId": value,
+                "order_id": order_id
+            },
+            success: function(result) {
+                result = JSON.parse(result);
+                if (result.success) {
+                    appAlert.success(result.message, {
+                        duration: 10000
+                    });
+                    setTimeout(function() {
+                        location.reload();
+                    }, 1000);
+                }
+            }
+        })
+    })
+
+
+
+
 </script>

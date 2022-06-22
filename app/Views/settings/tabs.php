@@ -6,7 +6,7 @@ $settings_menu = array(
         //array("name" => "email", "url" => "settings/email"),
         //array("name" => "email_templates", "url" => "email_templates"),
         // array("name" => "modules", "url" => "settings/modules"),
-        array("name" => "left_menu", "url" => "left_menus"),
+        // array("name" => "left_menu", "url" => "left_menus"),
         // array("name" => "footer", "url" => "settings/footer"),
         array("name" => "notifications", "url" => "settings/notifications"),
         // array("name" => "integration", "url" => "settings/integration"),
@@ -95,15 +95,15 @@ if (get_setting("module_order") == "1") {
 }
 
 $settings_menu["setup"][] = array("name" => "payment_methods", "url" => "payment_methods");
-$settings_menu["setup"][] = array("name" => "company", "url" => "settings/company");
-$settings_menu["setup"][] = array("name" => "taxes", "url" => "taxes");
+// $settings_menu["setup"][] = array("name" => "company", "url" => "settings/company");
+// $settings_menu["setup"][] = array("name" => "taxes", "url" => "taxes");
 
 if (get_setting("module_lead") == "1") {
     $settings_menu["setup"][] = array("name" => "leads", "url" => "lead_status");
 }
 
 //$settings_menu["setup"][] = array("name" => "gdpr", "url" => "settings/gdpr");
-//$settings_menu["setup"][] = array("name" => "pages", "url" => "pages");
+// $settings_menu["setup"][] = array("name" => "pages", "url" => "pages");
 
 $settings_menu = app_hooks()->apply_filters('app_filter_admin_settings_menu', $settings_menu);
 ?>

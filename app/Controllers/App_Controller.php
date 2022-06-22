@@ -124,6 +124,7 @@ class App_Controller extends Controller {
             'TransporterModel',
             'OrderProductModel',
             'Dispatch_model',
+            'Dispatch_status_model',
         );
     }
 

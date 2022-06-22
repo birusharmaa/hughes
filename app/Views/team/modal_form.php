@@ -23,6 +23,14 @@
         </div>
         <div class="form-group">
             <div class="row">
+                <label for="leaders" class=" col-md-3"><?php echo app_lang('teamLeader'); ?></label>
+                <div class="col-md-9">
+                    <input type="text" value="<?php echo $model_info->leaders; ?>" name="leaders" id="lead_members_dropdown" class="w100p validate-hidden" data-rule-required="true" data-msg-required="<?php echo app_lang('field_required'); ?>" placeholder="<?php echo app_lang('teamLeader'); ?>" />
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="row">
                 <label for="members" class=" col-md-3"><?php echo app_lang('team_members'); ?></label>
                 <div class="col-md-9">
                     <input type="text" value="<?php echo $model_info->members; ?>" name="members" id="team_members_dropdown" class="w100p validate-hidden"  data-rule-required="true" data-msg-required="<?php echo app_lang('field_required'); ?>" placeholder="<?php echo app_lang('team_members'); ?>"  />    
@@ -49,6 +57,11 @@
             multiple: true,
             data: <?php echo ($members_dropdown); ?>
         });
+
+        $("#lead_members_dropdown").select2({
+            data: <?php echo ($leaderss_dropdown); ?>
+        });
+
 
         $("#team-form .select2").select2();
         setTimeout(function () {

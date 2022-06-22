@@ -1,22 +1,17 @@
 <div class="table-responsive">
     <div class="tab-title clearfix no-border">
         <div class="title-button-group">
-        <?php echo modal_anchor(get_uri("order_status/modal_form"), "<i data-feather='plus-circle' class='icon-16'></i> " . app_lang('add_order_status'), array("class" => "btn btn-default", "title" => app_lang('add_order_status'), "id" => "order-status-add-btn"));
-            ?>
+            <?php echo modal_anchor(get_uri("dispatch_status/modal_form"), "<i data-feather='plus-circle' class='icon-16'></i> " . app_lang('add_dispatch_status'), array("class" => "btn btn-default", "title" => app_lang('add_dispatch_status'), "id" => "order-status-add-btn")); ?>
         </div>
     </div>
-    <table id="order-status-table" class="display no-thead b-t b-b-only no-hover" cellspacing="0" width="100%">
+    <table id="dispatch-status-table" class="display no-thead b-t b-b-only no-hover" cellspacing="0" width="100%">
     </table>
 </div>
 
-
-
-
-
 <script type="text/javascript">
     $(document).ready(function() {
-        $("#order-status-table").appTable({
-            source: '<?php echo_uri("order_status/list_data") ?>',
+        $("#dispatch-status-table").appTable({
+            source: '<?php echo_uri("dispatch_status/list_data") ?>',
             order: [
                 [0, "asc"]
             ],
@@ -35,7 +30,7 @@
             ],
             onInitComplete: function() {
                 //apply sortable
-                $("#order-status-table").find("tbody").attr("id", "custom-field-table-sortable");
+                $("#dispatch-status-table").find("tbody").attr("id", "custom-field-table-sortable");
                 var $selector = $("#custom-field-table-sortable");
 
                 Sortable.create($selector[0], {
@@ -56,7 +51,7 @@
 
                         //update sort indexes
                         $.ajax({
-                            url: '<?php echo_uri("order_status/update_field_sort_values") ?>',
+                            url: '<?php echo_uri("dispatch_status/update_field_sort_values") ?>',
                             type: "POST",
                             data: {
                                 sort_values: data

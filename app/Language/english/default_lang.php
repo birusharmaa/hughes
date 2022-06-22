@@ -2093,6 +2093,11 @@ $lang["hide_from_kanban_view"] = "Hide from kanban view";
 $lang["customer_name"] = "Customer Name";
 $lang["download_order"] = "Download Order";
 $lang["dispatch_advice"] = "Dispatch Advice";
-
-
+$lang["transport_company_name"] = "Transport Company Name";
+$lang["teamLeader"] = "Team leader";
+$lang["dispatch_status"] = "Dispatch Status";
+$lang["add_dispatch_status"] = "Add Dispatch Status";
+$lang["can_access_transport"] = "Can Access Transport";
+$lang["edit_dispatch_status"] = "Edit Dispatch Status";
+$lang["dispatch"] = "Dispatch";
 return $lang;

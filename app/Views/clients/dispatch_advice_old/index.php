@@ -1,8 +1,3 @@
-<style>
-    .w100 {
-        width: 100% !important;
-    }
-</style>
 <div class="card">
     <div class="tab-title clearfix">
         <h4><?php echo app_lang('dispatch_advice'); ?></h4>

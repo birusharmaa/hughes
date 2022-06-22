@@ -12,15 +12,15 @@
     </div> 
   
     <div class="table-responsive">
-        <table id="dispatch-order-table" class="display" cellspacing="0" width="100%">
+        <table id="dispatchcovering-order-table" class="display" cellspacing="0" width="100%">
         </table>
     </div>
 </div>s
 
 <script type="text/javascript">
     $(document).ready(function () { 
-        $("#dispatch-order-table").appTable({
-            source: '<?php echo_uri("DispatchAdvice/dispatch_advice_list_data_of_client/" . $client_id) ?>',
+        $("#dispatchcovering-order-table").appTable({
+            source: '<?php echo_uri("DispatchAdvice/dispatch_covering_list_data_of_client/" . $client_id) ?>',
             order: [[0, "desc"]],
             filterDropdown: [<?php echo $custom_field_filters; ?>],
             columns: [
