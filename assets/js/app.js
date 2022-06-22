@@ -1579,6 +1579,7 @@ var $appFilterXhrRequest = 'new';
         var defaults = {
             source: "", //data url
             xlsColumns: [], // array of excel exportable column numbers
+            xlsColumnsDown: [],
             pdfColumns: [], // array of pdf exportable column numbers
             printColumns: [], // array of printable column numbers
             columns: [], //column title and options
@@ -1610,6 +1611,7 @@ var $appFilterXhrRequest = 'new';
                 searchPlaceholder: AppLanugage.search,
                 printButtonText: AppLanugage.print,
                 excelButtonText: AppLanugage.excel,
+                excelDownButtonText: AppLanugage.excelDown,
                 printButtonToolTip: AppLanugage.printButtonTooltip,
                 today: AppLanugage.today,
                 yesterday: AppLanugage.yesterday,
@@ -2033,6 +2035,8 @@ var $appFilterXhrRequest = 'new';
                  });
                  */
             }
+
+            
 
             if (settings.pdfColumns.length) {
                 //add pdf button

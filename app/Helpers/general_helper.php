@@ -2056,7 +2056,14 @@ if (!function_exists('prepare_allowed_members_array')) {
             $invoice_info = $ci->Clients_model->get_total_leads_count();
             return $invoice_info;
         }
-    
+    }
+
+    if (!function_exists('bb_print_r')) {
+        function bb_print_r($data = [] ) {
+            echo "<pre>";
+            print_r($data);
+            exit;
+        }
     }
 
 }

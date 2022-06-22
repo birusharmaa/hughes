@@ -872,7 +872,6 @@ class DispatchAdvice extends Security_Controller
         validate_numeric_value($client_id);
         $this->check_access_to_store();
         $custom_fields = $this->Custom_fields_model->get_available_fields_for_table("orders", $this->login_user->is_admin, $this->login_user->user_type);
-
         $options = array("client_id" => $client_id, 
         "order_status" => 3,
         "custom_fields" => $custom_fields, 

@@ -192,8 +192,8 @@ $lang["literature"] = "Literature";
 $lang["assessment"] = "Assessment";
 $lang["quotation"] = "Quotation";
 $lang["customers"] = "Customers";
-$lang["pending_report"] = "Pending Dispatch Report";
-$lang["pending_application_report"] = "Pending Application Report";
+$lang["pending_report"] = "P D Report";
+$lang["pending_application_report"] = "P A Report";
 $lang["mis_payment"] = "MIS of Payments";
 $lang["lead_status_report"] = "Lead Status Report";
 $lang["client_status_report"] = "Client Status Report";
@@ -890,6 +890,7 @@ $lang["project_cloned_successfully"] = "The project has been cloned successfully
 $lang["search"] = "Search";
 $lang["no_record_found"] = "No record found.";
 $lang["excel"] = "Excel";
+$lang["excel_down"] = "Download";
 $lang["print_button_help_text"] = "Press escape when finished.";
 $lang["are_you_sure"] = "Are you sure?";
 $lang["file_upload_instruction"] = "Drag-and-drop documents here <br /> (or click to browse...)";
@@ -2100,4 +2101,9 @@ $lang["add_dispatch_status"] = "Add Dispatch Status";
 $lang["can_access_transport"] = "Can Access Transport";
 $lang["edit_dispatch_status"] = "Edit Dispatch Status";
 $lang["dispatch"] = "Dispatch";
+
+$lang["report"] = "Reports";
+$lang["pending_reports"] = "Pending reports";
+
+
 return $lang;

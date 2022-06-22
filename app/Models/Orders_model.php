@@ -237,8 +237,100 @@ class Orders_model extends Crud_model {
         LEFT JOIN thewings_dispatch_advice ON thewings_orders.id = thewings_dispatch_advice.order_id 
         WHERE thewings_orders.client_id=".$options["client_id"]." AND thewings_orders.order_staus=3 AND thewings_orders.deleted=0;";
         return $this->db->query($sql);
+    }
 
+    function get_details_dispatch_advice_reports($options = array())
+    {
+        $orders_table = $this->db->prefixTable('orders');
+        $clients_table = $this->db->prefixTable('clients');
+        $taxes_table = $this->db->prefixTable('taxes');
+        $order_items_table = $this->db->prefixTable('order_items');
+        $order_status_table = $this->db->prefixTable('order_status');
+        $users_table = $this->db->prefixTable('users');
+        $projects_table = $this->db->prefixTable('projects');
+        $where = "";
+        if(isset($options['start_date'])){
+            $where .= "AND `thewings_orders`.`order_date` >= '".$options['start_date']."' ";
+        }
+        if(isset($options['end_date'])){
+            $where .= "AND `thewings_orders`.`order_date` <= '".$options['end_date']."'  ";
+        }
 
+        if (!empty($options["client_id"])) {
+            $sql = "SELECT thewings_orders.*, thewings_order_items.`id` as order_item_id, thewings_order_items.`title`, thewings_order_items.`description`, thewings_order_items.`products`, thewings_order_items.`gst`, thewings_order_items.`affected_area`, thewings_order_items.`pestgo_gel`, thewings_order_items.`quantity`, thewings_order_items.`unit_type`, thewings_order_items.`rate`, thewings_order_items.`total`, 
+            thewings_order_items.`order_id`,  thewings_clients.`company_name`, thewings_clients.`father_name`, thewings_clients.`lead_source_id`, thewings_clients.`address`, thewings_clients.`city`, thewings_clients.`state`, thewings_clients.`zip`, thewings_clients.`country`, thewings_clients.`nature_of_industry`, thewings_clients.`name_of_contact_person`, thewings_clients.`designation`, thewings_clients.`mobile`, thewings_clients.`phone`, thewings_clients.`email`, thewings_clients.`website`,  thewings_clients.`product`, thewings_clients.`affected_area`, thewings_clients.`cds_upload`, thewings_clients.`enquiry_date`, thewings_clients.`remarks`, thewings_clients.`gst_number`, thewings_clients.`currency_symbol`, thewings_clients.`currency`,thewings_clients.`disable_online_payment`, thewings_clients.`group_ids`,thewings_dispatch_advice.`order_staus` AS dispatch_order_status
+            , thewings_dispatch_status.`title` as dispatch_title, thewings_dispatch_status.`color`
+            FROM `thewings_orders` 
+            LEFT JOIN thewings_order_items ON thewings_orders.id = thewings_order_items.order_id
+            LEFT JOIN thewings_clients ON thewings_orders.client_id = thewings_clients.id
+            LEFT JOIN thewings_dispatch_advice ON thewings_orders.id = thewings_dispatch_advice.order_id 
+            LEFT JOIN thewings_dispatch_status ON thewings_dispatch_advice.status = thewings_dispatch_status.id 
+            WHERE thewings_orders.client_id=" . $options["client_id"] . " AND thewings_dispatch_status.title!='Approved' AND thewings_orders.deleted=0 ".$where."; ";
+        }else{
+            $sql = "SELECT thewings_orders.*, thewings_order_items.`id` as order_item_id, thewings_order_items.`title`, thewings_order_items.`description`, thewings_order_items.`products`, thewings_order_items.`gst`, thewings_order_items.`affected_area`, thewings_order_items.`pestgo_gel`, thewings_order_items.`quantity`, thewings_order_items.`unit_type`, thewings_order_items.`rate`, thewings_order_items.`total`, 
+            thewings_order_items.`order_id`,  thewings_clients.`company_name`, thewings_clients.`father_name`, thewings_clients.`lead_source_id`, thewings_clients.`address`, thewings_clients.`city`, thewings_clients.`state`, thewings_clients.`zip`, thewings_clients.`country`, thewings_clients.`nature_of_industry`, thewings_clients.`name_of_contact_person`, thewings_clients.`designation`, thewings_clients.`mobile`, thewings_clients.`phone`, thewings_clients.`email`, thewings_clients.`website`,  thewings_clients.`product`, thewings_clients.`affected_area`, thewings_clients.`cds_upload`, thewings_clients.`enquiry_date`, thewings_clients.`remarks`, thewings_clients.`gst_number`, thewings_clients.`currency_symbol`, thewings_clients.`currency`,thewings_clients.`disable_online_payment`, thewings_clients.`group_ids`,thewings_dispatch_advice.`order_staus` AS dispatch_order_status
+            , `thewings_dispatch_status`.`title` as dispatch_title, thewings_dispatch_status.`color`
+            FROM `thewings_orders` 
+            LEFT JOIN thewings_order_items ON thewings_orders.id = thewings_order_items.order_id
+            LEFT JOIN thewings_clients ON thewings_orders.client_id = thewings_clients.id
+            LEFT JOIN thewings_dispatch_advice ON thewings_orders.id = thewings_dispatch_advice.order_id 
+            LEFT JOIN thewings_dispatch_status ON thewings_dispatch_advice.status = thewings_dispatch_status.id 
+            WHERE thewings_dispatch_status.title!='Approved' AND thewings_orders.deleted=0 ".$where.";";
+        }
+       
+        return $this->db->query($sql);
+    }
+
+    function get_leads_reports($options = array()){
+        
+        $where = "";
+        if(isset($options['start_date'])){
+            $where .= " AND `thewings_clients`.`created_date` >= '".$options['start_date']."' ";
+        }
+        if(isset($options['end_date'])){
+            $where .= " AND `thewings_clients`.`created_date` <= '".$options['end_date']."'  ";
+        }
+        
+        //$options["client_id"] = 2;
+        if (!empty($options["client_id"])) {
+            $sql = "SELECT thewings_clients.*, COUNT(*) as count_row, thewings_lead_status.`id` as lead_status_id, thewings_lead_status.`title`, thewings_lead_status.`color`
+            FROM `thewings_clients` 
+            LEFT JOIN thewings_lead_status ON thewings_lead_status.id = thewings_clients.lead_status_id
+            WHERE thewings_clients.created_by=".$options["client_id"].$where." GROUP BY thewings_clients.lead_status_id";
+        }else{
+            $sql = "SELECT thewings_clients.*, COUNT(*) as count_row, thewings_lead_status.`id` as lead_status, thewings_lead_status.`title`, thewings_lead_status.`color`
+            FROM `thewings_clients` 
+            LEFT JOIN thewings_lead_status ON thewings_lead_status.id = thewings_clients.lead_status_id
+            WHERE thewings_clients.created_by IS NOT NULL ".$where ." GROUP BY thewings_clients.lead_status_id";
+        }
+        return $this->db->query($sql);
+    }
+
+    function get_clients_reports($options = array()){
+        
+        $where = "";
+        if(isset($options['start_date'])){
+            $where .= " AND `thewings_clients`.`created_date` >= '".$options['start_date']."' ";
+        }
+        if(isset($options['end_date'])){
+            $where .= " AND `thewings_clients`.`created_date` <= '".$options['end_date']."'  ";
+        }
+        
+        //$options["client_id"] = 2;
+        if (!empty($options["client_id"])) {
+            $sql = "SELECT thewings_clients.*, COUNT(*) as count_row, thewings_lead_status.`id` as lead_status_id, thewings_lead_status.`title`, thewings_lead_status.`color`
+            FROM `thewings_clients` 
+            LEFT JOIN thewings_lead_status ON thewings_lead_status.id = thewings_clients.lead_status_id
+            WHERE ( thewings_lead_status.title ='Order' OR thewings_lead_status.title ='Dispatch Advice' OR thewings_lead_status.title ='Dispatch' OR thewings_lead_status.title ='Payment' ) AND thewings_clients.created_by=".$options["client_id"].$where." GROUP BY thewings_clients.lead_status_id";
+        }else{
+            $sql = "SELECT thewings_clients.*, COUNT(*) as count_row, thewings_lead_status.`id` as lead_status, thewings_lead_status.`title`, thewings_lead_status.`color`
+            FROM `thewings_clients` 
+            LEFT JOIN thewings_lead_status ON thewings_lead_status.id = thewings_clients.lead_status_id
+            WHERE ( thewings_lead_status.title ='Order' OR thewings_lead_status.title ='Dispatch Advice' OR thewings_lead_status.title ='Dispatch' OR thewings_lead_status.title ='Payment' ) ".$where ." GROUP BY thewings_clients.lead_status_id";
+        }
+        // echo $sql;
+        // exit;
+        return $this->db->query($sql);
     }
 
 }
