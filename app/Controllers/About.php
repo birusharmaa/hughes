@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Controllers;
-
+ 
 class About extends App_Controller {
 
     protected $Pages_model;
