@@ -334,12 +334,11 @@ class Orders_model extends Crud_model {
     }
 
     function get_mis_payment_reports($options = array()){
-        
         $where = "";
-        if(isset($options['start_date'])){
+        if(isset($options['start_date']) && !empty($options['start_date']) ){
             $where .= " AND `thewings_clients`.`created_date` >= '".$options['start_date']."' ";
         }
-        if(isset($options['end_date'])){
+        if(isset($options['end_date']) && !empty($options['end_date'])){
             $where .= " AND `thewings_clients`.`created_date` <= '".$options['end_date']."'  ";
         }
         
@@ -355,6 +354,7 @@ class Orders_model extends Crud_model {
             LEFT JOIN thewings_lead_status ON thewings_lead_status.id = `thewings_clients`.`lead_status_id`
             WHERE thewings_lead_status.title ='Payment' ".$where ." ";
         }        
+       
         return $this->db->query($sql);
     }
 
@@ -367,5 +367,15 @@ class Orders_model extends Crud_model {
         $result = $this->db->query($sql);
         return $result->getResult();
     }
+
+    function getPeymentDetails($client_id = 0){        
+        $sql = "SELECT `id`,`amount`, `payment_date`
+        FROM `thewings_invoice_payments` 
+        WHERE  clientId=".$client_id ." ";  
+        $result = $this->db->query($sql);
+        return $result->getResult();
+    }
+
+    
 
 }

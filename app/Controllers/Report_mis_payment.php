@@ -62,99 +62,33 @@ class Report_mis_payment extends Security_Controller
         echo json_encode(array("data" => $result));
     }
 
-    function downloadExcel(){
-        // if ($this->login_user->is_admin == 1) {
-        //     $options = array(
-        //         "client_id" => ''
-        //     );
-        // } else {
-        //     $options = array(
-        //         "client_id" => $this->login_user->id
-        //     );
-        // }
-        // $list_data = $this->Orders_model->get_mis_payment_reports($options)->getResult();
+    function downloadExcel($from=null, $to=null){
+        $start_date = "";
+        if(!empty($from)){
+            $start_date = date('Y-m-d', strtotime($from));
+        }
 
-        // $filename = 'mis_payment' . date('Ymd') . '.csv';
-        // header('Content-Type: text/csv; charset=utf-8');
-		// header('Content-Disposition: attachment; filename=' . $filename);
-		// //$output = fopen('php://output', 'w');
-        // $output = fopen('php://output', 'w');
-        // $header = array("Sr No", "Particulars", "Amount", "Due Date", "Expected Realisation");
-        
-
-        // // file creation 
-        // // $text = 'MIS of Payment As On '.date('d.m.Y');
-        // // $head = [$text];
-        // // fputcsv($output, $head);
-        // fputcsv($output, $header);
-        // $i = 0;
-        // $first_row = ["", "", "", "", '10.04.2022	20.04.2022	30.04.2022	May-22'];
-        // fputcsv($output, $first_row);
-
-        // //Total number of clients
-        // foreach ($list_data as $data) {
-        //     $j = 1;
-        //     //Show clients name
-        //     $name = [
-        //         chr(65+$i),
-        //         $data->company_name,
-        //         '',
-        //         '',
-        //         '',
-        //     ];
-
-        //     //Push client name data
-        //     fputcsv($output, $name);
-
-        //     //Get Client id
-        //     $client_id = $data->id;
-
-        //     //Get client order details
-        //     $order_datails = $this->Orders_model->getOrderDetails($client_id);
-
-        //     //Get bussiness/order details
-        //     $final_amt = 0;
-        //     foreach ($order_datails as $order_datail) {
-        //         $bussines_name = [
-        //             $j++,
-        //             $order_datail->business_name,
-        //             $order_datail->total_amount,
-        //             date('d.m.Y', (strtotime($order_datail->order_date))+(86400*7)),
-        //             '',
-        //         ];
-        //         $final_amt = $final_amt+$order_datail->total_amount;
-                
-        //         //Add business name or order detail in .csv file
-        //         fputcsv($output, $bussines_name);
-        //     }
-        //     $footer = [
-        //         '',
-        //         "TOTAL ".chr(65+$i),
-        //         $final_amt,
-        //     ];
-
-        //     //total section row data added in .csv file
-        //     fputcsv($output, $footer);
-
-        //     //86400
-            
-        //     $i++;
-        // }
-        // fclose($output);
-
+        $end_date = "";
+        if(!empty($from)){
+            $end_date = date('Y-m-d', strtotime($to));
+        }
        
-        
         
         if ($this->login_user->is_admin == 1) {
             $options = array(
-                "client_id" => ''
+                "client_id" => '',
+                'start_date'=> $start_date,
+                'end_date'  => $end_date
             );
         } else {
             $options = array(
-                "client_id" => $this->login_user->id
+                "client_id" => $this->login_user->id,
+                'start_date'=> $start_date,
+                'end_date'  => $end_date
             );
         }
         $list_data = $this->Orders_model->get_mis_payment_reports($options)->getResult();
+
 
 
         $file_name = 'mis_payment' . date('Ymd') . '.xlsx';
@@ -163,8 +97,22 @@ class Report_mis_payment extends Security_Controller
 
         $spreadsheet->getActiveSheet()->getStyle('A1:E1')->getFill()
         ->getStartColor()->setARGB('FFFF0000');
+
+        if(!empty($start_date)){
+            $date = date("d-m-Y", strtotime($start_date))." To ".date("d-m-Y", strtotime($end_date));
+            $expect_date_first = "10-".date("m-Y", strtotime($start_date));
+            $expect_date_second= "20-".date("m-Y", strtotime($start_date));
+            $expect_date_third = "30-".date("m-Y", strtotime($start_date));
+            $expect_date_fourth= date('M-Y', strtotime('+1 month', strtotime($start_date)));
+        }else{
+            $date = date("d-m-Y");
+            $expect_date_first = "10-".date("m-Y");
+            $expect_date_second= "20-".date("m-Y");
+            $expect_date_third = "30-".date("m-Y");
+            $expect_date_fourth= date('M-Y', strtotime('+1 month'));
+        }
         
-        $sheet->setCellValue('A1', 'MIS of Payment As On 08.04.2022');
+        $sheet->setCellValue('A1', 'MIS of Payment As On '.$date);
         $styleArray = [
             'font' => [
                 'bold' => true,
@@ -190,18 +138,8 @@ class Report_mis_payment extends Security_Controller
                     'argb' => 'FFFF00',
                 ],
             ],
-            
-        
         ];
-        // $borderStyleArray = array(
-        //     'borders' => array(
-        //         'outline' => array(
-        //             'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THICK,
-        //             'color' => array('argb' => 'FFFF00'),
-        //         ),
-        //     ),
-        // );
-    
+       
         
         $sheet->mergeCells("A1:H1");      
         $sheet->mergeCells("E2:H2");
@@ -227,10 +165,10 @@ class Report_mis_payment extends Security_Controller
         $sheet->setCellValue('B3', "");
         $sheet->setCellValue('C3', "");
         $sheet->setCellValue('D3', "");
-        $sheet->setCellValue('E3', "10.04.2022");
-        $sheet->setCellValue('F3', "20.04.2022");
-        $sheet->setCellValue('G3', "30.04.2022");
-        $sheet->setCellValue('H3', "May-22");
+        $sheet->setCellValue('E3', $expect_date_first);
+        $sheet->setCellValue('F3', $expect_date_second);
+        $sheet->setCellValue('G3', $expect_date_third);
+        $sheet->setCellValue('H3', $expect_date_fourth);
         
         $k = 4;
         $i = 0;
@@ -257,7 +195,22 @@ class Report_mis_payment extends Security_Controller
                 $sheet->setCellValue('B'.$k, $order_datail->business_name);
                 $sheet->setCellValue('C'.$k, to_currency($order_datail->total_amount));
                 $sheet->setCellValue('D'.$k, date('d.m.Y', (strtotime($order_datail->order_date))+(86400*7)) );
-                $sheet->setCellValue('E'.$k, "");
+                
+                $payment_details = $this->Orders_model->getPeymentDetails($client_id);
+
+                $tot = count($payment_details);
+                
+                $m = 0;
+                $ind = chr(69+$m++).$k;
+                foreach ($payment_details as $payment_detail) {
+                    $sheet->setCellValue($ind, "A");
+                    $sheet->setCellValue($ind, "B");
+                    $sheet->setCellValue($ind, "C");
+                    $sheet->setCellValue($ind, $payment_detail->amount);
+                }
+
+                
+
                 $k++;
                 $j++;
             }
@@ -265,14 +218,29 @@ class Report_mis_payment extends Security_Controller
             $sheet->setCellValue('A'.$k, "");
             $sheet->setCellValue('B'.$k, "TOTAL ".chr(65+$i));
             $sheet->setCellValue('C'.$k, to_currency($final_amt));
-            $sheet->setCellValue('D'.$k, "");
+            $sheet->setCellValue('D'.$k, " ");
             $sheet->setCellValue('E'.$k, "");
             $spreadsheet->getActiveSheet()->getStyle('A'.$k)->applyFromArray($styleArray);
             $spreadsheet->getActiveSheet()->getStyle('B'.$k)->applyFromArray($styleArray);
             $spreadsheet->getActiveSheet()->getStyle('C'.$k)->applyFromArray($styleArray);
             $str = 'A'.$k.':'.'H'.$k;
             $sheet->getStyle($str)->applyFromArray($styleArray_header_grad);	
+            
+            if($i == (sizeof($list_data)-1)){
+                $last = $k+1;
+                $sheet->setCellValue('A'.$last, "");
+                $sheet->setCellValue('B'.$last, "GRAND TOTAL");
+                $sheet->setCellValue('C'.$last, to_currency($grand_total));
+                $sheet->setCellValue('D'.$last, "");
+                $sheet->setCellValue('E'.$last, "");
 
+                $spreadsheet->getActiveSheet()->getStyle('A'.$last)->applyFromArray($styleArray);
+                $spreadsheet->getActiveSheet()->getStyle('B'.$last)->applyFromArray($styleArray);
+                $spreadsheet->getActiveSheet()->getStyle('C'.$last)->applyFromArray($styleArray);
+
+                $str = 'A'.$last.':'.'H'.$last;
+                $sheet->getStyle($str)->applyFromArray($styleArray_header_grad);	
+            }
             $k++;
             $i++;
         }
@@ -280,10 +248,7 @@ class Report_mis_payment extends Security_Controller
         for ($l = 'A'; $l !=  $spreadsheet->getActiveSheet()->getHighestColumn(); $l++) {
             $spreadsheet->getActiveSheet()->getColumnDimension($l)->setAutoSize(TRUE);
             $spreadsheet->getActiveSheet()->getStyle($l)->getAlignment()->setHorizontal('center');
-            // $spreadsheet->getActiveSheet()->getStyle($l)->applyFromArray($borderStyleArray);
         }
-    
-        //$spreadsheet->getActiveSheet()->getStyle('A1:E1')->getFill()->getStartColor()->setARGB('FFFF00');
 
         $writer = new Xlsx($spreadsheet);
 		$writer->save($file_name);
