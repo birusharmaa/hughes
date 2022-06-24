@@ -87,10 +87,19 @@ class Report_clients extends Security_Controller
     }
 
 
-    function dispatch_advice_list_data_of_client($client_id = 0, $options)
+    function dispatch_advice_list_data_of_client($client_id = 0, $date_option)
     {
         validate_numeric_value($client_id);
         $this->check_access_to_store();
+
+        $custom_fields = $this->Custom_fields_model->get_available_fields_for_table("orders", $this->login_user->is_admin, $this->login_user->user_type);
+        
+        $options = array(
+            "client_id" => $client_id, 
+            "order_status" => 3,
+            "custom_fields" => $custom_fields, 
+            "custom_field_filter" => $this->prepare_custom_field_filter_values("orders", $this->login_user->is_admin, $this->login_user->user_type));
+        $options = array_merge($options, $date_option);
 
         $list_data = $this->Orders_model->get_clients_reports($options)->getResult();     
         $result = array();

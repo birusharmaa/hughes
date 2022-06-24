@@ -1984,7 +1984,6 @@ var $appFilterXhrRequest = 'new';
 
             if (settings.xlsColumns.length) {
                 //add excel button
-
                 datatableButtons.push({
                     extend: 'excelHtml5',
                     footer: true,

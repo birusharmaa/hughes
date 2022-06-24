@@ -2104,6 +2104,6 @@ $lang["dispatch"] = "Dispatch";
 
 $lang["report"] = "Reports";
 $lang["pending_reports"] = "Pending reports";
-
+$lang["s_n"] = "S.No";
 
 return $lang;

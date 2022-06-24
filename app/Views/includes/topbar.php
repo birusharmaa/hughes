@@ -172,7 +172,7 @@
                 notificationIcon = "#web-notification-icon";
 
         //check message notifications
-        messageOptions.notificationUrl = "<?php echo_uri('messages/get_notifications'); ?>";
+        //messageOptions.notificationUrl = "<?php echo_uri('messages/get_notifications'); ?>";
         messageOptions.notificationStatusUpdateUrl = "<?php echo_uri('messages/update_notification_checking_status'); ?>";
         messageOptions.checkNotificationAfterEvery = "<?php echo get_setting('check_notification_after_every'); ?>";
         messageOptions.icon = "mail";
@@ -193,7 +193,7 @@
 
 
         //check web notifications
-        notificationOptions.notificationUrl = "<?php echo_uri('notifications/count_notifications'); ?>";
+        //notificationOptions.notificationUrl = "<?php echo_uri('notifications/count_notifications'); ?>";
         notificationOptions.notificationStatusUpdateUrl = "<?php echo_uri('notifications/update_notification_checking_status'); ?>";
         notificationOptions.checkNotificationAfterEvery = "<?php echo get_setting('check_notification_after_every'); ?>";
         notificationOptions.icon = "bell";

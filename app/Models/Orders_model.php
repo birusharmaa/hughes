@@ -333,4 +333,39 @@ class Orders_model extends Crud_model {
         return $this->db->query($sql);
     }
 
+    function get_mis_payment_reports($options = array()){
+        
+        $where = "";
+        if(isset($options['start_date'])){
+            $where .= " AND `thewings_clients`.`created_date` >= '".$options['start_date']."' ";
+        }
+        if(isset($options['end_date'])){
+            $where .= " AND `thewings_clients`.`created_date` <= '".$options['end_date']."'  ";
+        }
+        
+        //$options["client_id"] = 4;
+        if (!empty($options["client_id"])) {
+            $sql = "SELECT `thewings_clients`.`id`,`thewings_clients`.`company_name`, `thewings_clients`.`address`, `thewings_clients`.`name_of_contact_person`, `thewings_clients`.`mobile`, `thewings_clients`.`business_name`
+            FROM `thewings_clients` 
+            LEFT JOIN thewings_lead_status ON thewings_lead_status.id = `thewings_clients`.`lead_status_id`
+            WHERE thewings_lead_status.title ='Payment' AND thewings_clients.id=".$options["client_id"]." ".$where." ";
+        }else{
+            $sql = "SELECT `thewings_clients`.`id`, `thewings_clients`.`company_name`, `thewings_clients`.`address`, `thewings_clients`.`name_of_contact_person`, `thewings_clients`.`mobile`, `thewings_clients`.`business_name`
+            FROM `thewings_clients` 
+            LEFT JOIN thewings_lead_status ON thewings_lead_status.id = `thewings_clients`.`lead_status_id`
+            WHERE thewings_lead_status.title ='Payment' ".$where ." ";
+        }        
+        return $this->db->query($sql);
+    }
+
+
+    function getOrderDetails($client_id = 0){        
+        $sql = "SELECT `thewings_orders`.`id`, `thewings_orders`.`order_date`, `thewings_orders`.`total_amount`, `thewings_clients`.`business_name`
+        FROM `thewings_orders` 
+        LEFT JOIN thewings_clients ON thewings_orders.client_id = `thewings_clients`.`id`
+        WHERE  thewings_orders.client_id=".$client_id ." ";  
+        $result = $this->db->query($sql);
+        return $result->getResult();
+    }
+
 }
